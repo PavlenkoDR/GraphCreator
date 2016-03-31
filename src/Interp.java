@@ -4,9 +4,11 @@ import java.util.Scanner;
 
 
 public class Interp {
-	private double X[], F[], a[];
+	protected double X[];
+	protected double F[];
+	protected double a[];
 	int size;
-	private double A[][];
+	protected double A[][];
 	Solver LU;
 	Scanner in;
 	public Interp(int _size, double[] _X, double[] _F) {
@@ -14,20 +16,7 @@ public class Interp {
 		F = _F;
 		size = _size;
 		A = new double [size][size];
-		double tmp;
-		for (int i = 0; i < size; i++)
-		{
-			tmp = 1;
-			for (int j = 0; j < size; j++)
-			{
-				A[i][j] = tmp;
-				tmp *= X[i];
-			}
-		}
-		
-		LU = new Solver(size, A);
-		LU.GetLU();
-		a = LU.getSolv(F);
+		InitMatrix();
 	}
 	public Interp(File f) {
 		try {
@@ -43,6 +32,10 @@ public class Interp {
 		for (int i = 0; i < size; i++)
 			F[i] = in.nextDouble();
 		A = new double [size][size];
+		InitMatrix();
+	}
+	private void InitMatrix()
+	{
 		double tmp;
 		for (int i = 0; i < size; i++)
 		{
@@ -53,21 +46,26 @@ public class Interp {
 				tmp *= X[i];
 			}
 		}
-		
 		LU = new Solver(size, A);
-		LU.GetLU();
 		a = LU.getSolv(F);
 	}
 	public void OutputData()
 	{
-		System.out.println("A =");
-		for (int i = 0; i < size; i++)
+		if (LU == null)
 		{
-			for (int j = 0; j < size; j++)
-				System.out.print(A[i][j] + " ");
+			System.out.println("A =");
+			for (int i = 0; i < size; i++)
+			{
+				for (int j = 0; j < size; j++)
+					System.out.print(A[i][j] + " ");
+				System.out.println();
+			}
 			System.out.println();
 		}
-		System.out.println();
+		else
+		{
+			LU.OutputData();
+		}
 	}
 	public double getValue(double x)
 	{

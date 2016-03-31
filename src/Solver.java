@@ -44,6 +44,7 @@ public class Solver {
 				}
 			}
 			System.out.println();
+			GetLU();
 		}
 		else
 			return;
@@ -58,6 +59,7 @@ public class Solver {
 		A = _A;
 		L = new double[size][size];
 		U = new double[size][size];
+		GetLU();
 	}
 	public void Init(int _size, double[][]_A)
 	{
@@ -75,11 +77,12 @@ public class Solver {
 			A = _A;
 			L = new double[size][size];
 			U = new double[size][size];
+			GetLU();
 		}
 		else
 			return;
 	}
-	public void GetLU()
+	private void GetLU()
 	{
 		if (size == 0) 
 		{
@@ -118,6 +121,7 @@ public class Solver {
 	}
 	public void OutputData()
 	{
+		System.out.println();
 		System.out.println("A =");
 		for (int i = 0; i < size; i++)
 		{
@@ -178,25 +182,4 @@ public class Solver {
 		//	System.out.print(x[i] + " ");
 		return x;
 	}
-    public static void main(String[] args) {
-        Solver obj = new Solver();
-        double[] F = new double[4];
-        F[0] = -14;
-        F[1] = 44;
-        F[2] = 142;
-        F[3] = -76;
-        double [][]_A = 
-        {
-        	{3, 		4, 		-9, 	5	},
-        	{-15, 		-12, 	50, 	-16	},
-        	{-27, 		-36, 	73, 	8	},
-        	{9, 		12, 	-10, 	-16	}
-        };
-    	obj.Init(4, _A);
-    	obj.GetLU();
-    	//obj.OutputData();
-    	double[] x = obj.getSolv(F);
-    	for (int i = 0; i < obj.GetSize(); i++)
-    		System.out.print(x[i] + " ");
-    }
 }
