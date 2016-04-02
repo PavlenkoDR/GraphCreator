@@ -36,6 +36,17 @@ public class Interp {
 	}
 	private void InitMatrix()
 	{
+		for (int i = 0; i < size - 1; i++)
+		{
+			for (int j = i + 1; j < size; j++)
+			{
+				if (X[i] == X[j])
+				{
+					System.out.println("Error: X[" + i + "] == X[" + j + "]");
+					System.exit(0);
+				}
+			}
+		}
 		double tmp;
 		for (int i = 0; i < size; i++)
 		{
@@ -48,6 +59,10 @@ public class Interp {
 		}
 		LU = new Solver(size, A);
 		a = LU.getSolv(F);
+		//System.out.println("!");
+		//for (int i = 0; i < size; i++)
+		//	System.out.print(a[i] + " ");
+		//System.out.println("!");
 	}
 	public void OutputData()
 	{
