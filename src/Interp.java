@@ -93,4 +93,16 @@ public class Interp {
 		}
 		return tmp;
 	}
+	public double [] GetPointsX()
+	{
+		return X;
+	}
+	public double [] GetPointsY()
+	{
+		return F;
+	}
+	public int GetSize()
+	{
+		return size;
+	}
 }
