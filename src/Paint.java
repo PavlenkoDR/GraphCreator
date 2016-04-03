@@ -3,10 +3,10 @@ import java.awt.Graphics;
 
 
 public class Paint {
-	private static double BorderMinX = -10;
-	private static double BorderMaxX = 10;
-	private static double BorderMinY = -10;
-	private static double BorderMaxY = 10;
+	static double BorderMinX = -20;
+	static double BorderMaxX = 20;
+	static double BorderMinY = -20;
+	static double BorderMaxY = 20;
 	
     double tmp1;
     double tmp2;
@@ -16,6 +16,8 @@ public class Paint {
 
     static double PointsX[];
     static double PointsY[];
+    
+    static int size;
 
     static double xScale1 = 1;
     static double yScale1 = 1;
@@ -28,7 +30,10 @@ public class Paint {
     
     static int nApprox = 2;
     
-    static int size;
+    static int PointsRadius;
+    
+    static double ActionRadius;
+    static int ActionPoint;
     
 	Paint(Interp t_Interp)
 	{
@@ -178,16 +183,78 @@ public class Paint {
             //					+ " " + ((int)Math.round(yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + height - PosY)) + ">>>");
         }
 	}
-	void DrawPoints(Graphics g)
+	static void DrawPoints(Graphics g)
 	{
     	g.setColor(Color.RED);
         for (int i = 0; i < size; i++)
         {
       	  	g.drawOval(
-      	  			(int)Math.round(PointsX[i]*xScale1 + PosX) - 3, 
-      	  			(int)Math.round(-PointsY[i]*yScale1 + height - PosY) - 3, 
-      	  			6, 
-      	  			6);
+      	  			(int)Math.round(PointsX[i]*xScale1 + PosX) - PointsRadius, 
+      	  			(int)Math.round(-PointsY[i]*yScale1 + height - PosY) - PointsRadius, 
+      	  		    PointsRadius*2, 
+      	  		    PointsRadius*2);
         }
+	}
+	
+	static void DrawGrid(Graphics g)
+	{
+    	g.setColor(new Color(220, 220, 220));
+		for (double i = BorderMinX*xScale1; i <= BorderMaxX*xScale1; i+= xScale1)
+			for (double j = BorderMinY*yScale1; j <= BorderMaxY*yScale1; j+= yScale1)
+			{
+	      	  	g.drawLine(
+	      	  			(int)Math.round(i + PosX), 
+	      	  			(int)Math.round(BorderMinY*yScale1 + PosY), 
+	      	  			(int)Math.round(i + PosX), 
+	      	  			(int)Math.round(BorderMaxY*yScale1 + PosY)
+	      			  );
+	      	  	g.drawLine(
+		      			(int)Math.round(BorderMinX*xScale1 + PosX), 
+		      			(int)Math.round(j + PosY), 
+		      			(int)Math.round(BorderMaxX*xScale1 + PosX), 
+		      			(int)Math.round(j + PosY)
+		      			  );
+			}
+	}
+	static void DrawCoord(Graphics g)
+	{
+    	g.setColor(new Color(0, 0, 0));
+
+  	  	g.drawLine(
+  	  			(int)Math.round(PosX), 
+  	  			(int)Math.round(BorderMinY*yScale1 + PosY), 
+  	  			(int)Math.round(PosX), 
+  	  			(int)Math.round(BorderMaxY*yScale1 + PosY)
+  			  );
+		g.drawString("y", 
+				(int)Math.round(PosX + PointsRadius) - 20 , 
+				((int)Math.round(BorderMinY*yScale1 + PosY + 10)>10)?((int)Math.round(BorderMinY*yScale1 + PosY + 10)):10);
+  	  	g.drawLine(
+      			(int)Math.round(BorderMinX*xScale1 + PosX), 
+      			(int)Math.round(PosY), 
+      			(int)Math.round(BorderMaxX*xScale1 + PosX), 
+      			(int)Math.round(PosY)
+      			  );
+		g.drawString("X", 
+				((int)Math.round(BorderMaxX*xScale1 + PosX) - 10 < width - 10)?((int)Math.round(BorderMaxX*xScale1 + PosX) - 10):(width - 10), 
+				(int)Math.round(PosY) - 10);
+	}
+	
+	static void DefaultSetting()
+	{
+		  		xScale1 = 16;
+		  		yScale1 = 16;
+		  		PosX = 100;
+		  		PosY = 100;
+		  		width = 400;
+		  		height = 400;
+		  		ceil = 20;
+		  		nApprox = 4;
+		  		PointsRadius = 3;
+		  		BorderMinX = -20;
+		  		BorderMaxX = 20;
+		  		BorderMinY = -20;
+		  		BorderMaxY = 20;
+		  		ActionRadius = 0.5;
 	}
 }

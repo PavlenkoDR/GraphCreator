@@ -10,14 +10,12 @@ public class Approx extends Interp{
 		super(_size, _X, _F);
 		SumArr = new double[2*size];
 		B = new double[size];
-		InitSumm();
 	}
 
 	public Approx(File f) {
 		super(f);
 		SumArr = new double[2*size];
 		B = new double[size];
-		InitSumm();
 	}
 	
 	private void InitSumm()
@@ -64,8 +62,9 @@ public class Approx extends Interp{
 		
 	}
 	
-	private void InitMatrix(int n)
+	public void InitMatrix(int n)
 	{
+		InitSumm();
 		for (int i = 0; i < n; i++)
 		{
 			for (int j = 0; j < n; j++)

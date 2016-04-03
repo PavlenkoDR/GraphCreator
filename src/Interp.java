@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 
 public class Interp {
-	protected double X[];
-	protected double F[];
+	public double X[];
+	public double F[];
 	protected double a[];
 	int size;
 	protected double A[][];
@@ -34,7 +34,7 @@ public class Interp {
 		A = new double [size][size];
 		InitMatrix();
 	}
-	private void InitMatrix()
+	public void InitMatrix()
 	{
 		for (int i = 0; i < size - 1; i++)
 		{
