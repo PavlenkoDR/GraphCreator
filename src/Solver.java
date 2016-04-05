@@ -164,9 +164,6 @@ public class Solver {
 			}
 			y[i] = (F[i] - sum)/L[i][i];
 		}
-		//for (int i = 0; i < size; i++)
-		//	System.out.print(y[i] + " ");
-		//System.out.println();
 
 		double x[] = new double[size];
 		for (int i = size - 1; i >= 0; i--)
@@ -178,8 +175,6 @@ public class Solver {
 			}
 			x[i] = (y[i] - sum)/U[i][i];
 		}	
-		//for (int i = 0; i < size; i++)
-		//	System.out.print(x[i] + " ");
 		return x;
 	}
 }

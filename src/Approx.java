@@ -1,7 +1,7 @@
 import java.io.File;
 
 
-public class Approx extends Interp{
+public class Approx extends InterpMatrix{
 	
 	double SumArr[];
 	double B[];
@@ -36,10 +36,7 @@ public class Approx extends Interp{
 			for (int j = 0; j < m; j++)
 			{
 				tmpx[j] *= X[j];
-				//System.out.print(tmpx[j] + " ");
 			}
-			//System.out.println();
-			//System.out.println();
 		}
 		for (int i = 0; i < m; i++)
 			tmpx[i] = 1;
@@ -54,10 +51,7 @@ public class Approx extends Interp{
 			for (int j = 0; j < m; j++)
 			{
 				tmpx[j] *= X[j];
-				//System.out.print(tmpx[j] + " ");
 			}
-			//System.out.println();
-			//System.out.println();
 		}
 		
 	}

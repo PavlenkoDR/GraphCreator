@@ -35,7 +35,7 @@ public class Paint {
     static double ActionRadius;
     static int ActionPoint;
     
-	Paint(Interp t_Interp)
+	Paint(InterpMatrix t_Interp)
 	{
 		PointsX = t_Interp.GetPointsX();
 		PointsY = t_Interp.GetPointsY();
@@ -43,23 +43,28 @@ public class Paint {
 
         xGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
         yGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
- 		  //System.out.println("!!!" + ((int)((BorderMaxX - BorderMinX)*ceil) + 1) + "!!!");
         //g.setColor(Color.BLACK);
         for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
         {
-	  		  //System.out.println("> " + (int)Math.round((i - BorderMinX)*ceil));
 	  		  xGraph[(int)Math.round((i - BorderMinX)*ceil)] = i;
 	  		  yGraph[(int)Math.round((i - BorderMinX)*ceil)] = -(t_Interp.getValue(i));
-	  		  //System.out.println((int)((i - BorderMinX)*ceil));
-	  		  //System.out.println("{" + (int)xGraph[(int)((i - BorderMinX)*ceil)] + "," + (int)yGraph[(int)((i - BorderMinX)*ceil)] + "},");
         }
- 		  //System.out.println("<<<" + xGraph[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1] + " " + yGraph[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1] + ">>>");
-        //*
-        //for (double i = 0; i <= BorderMaxX - BorderMinX; i += 1/(double)ceil)
-        //{
-	  	  //	System.out.println(xGraph[(int)(i*ceil)] + " " + yGraph[(int)(i*ceil)]);
-        //}
-		
+	}
+	
+	Paint(InterpPoly t_Interp)
+	{
+		PointsX = t_Interp.GetPointsX();
+		PointsY = t_Interp.GetPointsY();
+		size = t_Interp.GetSize();
+
+        xGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
+        yGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
+        //g.setColor(Color.BLACK);
+        for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
+        {
+	  		  xGraph[(int)Math.round((i - BorderMinX)*ceil)] = i;
+	  		  yGraph[(int)Math.round((i - BorderMinX)*ceil)] = -t_Interp.getValue(i);
+        }
 	}
 	
 	Paint(Approx t_Approx)
@@ -70,117 +75,31 @@ public class Paint {
 
         xGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
         yGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
- 		  //System.out.println("!!!" + ((int)((BorderMaxX - BorderMinX)*ceil) + 1) + "!!!");
-        //g.setColor(Color.BLACK);
         for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
         {
-	  		  //System.out.println("> " + (int)Math.round((i - BorderMinX)*ceil));
 	  		  xGraph[(int)Math.round((i - BorderMinX)*ceil)] = i;
 	  		  yGraph[(int)Math.round((i - BorderMinX)*ceil)] = -(t_Approx.getValue(i, nApprox));
-	  		  //System.out.println((int)((i - BorderMinX)*ceil));
-	  		  //System.out.println("{" + (int)xGraph[(int)((i - BorderMinX)*ceil)] + "," + (int)yGraph[(int)((i - BorderMinX)*ceil)] + "},");
         }
- 		  //System.out.println("<<<" + xGraph[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1] + " " + yGraph[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1] + ">>>");
-        //*
-        //for (double i = 0; i <= BorderMaxX - BorderMinX; i += 1/(double)ceil)
-        //{
-	  	  //	System.out.println(xGraph[(int)(i*ceil)] + " " + yGraph[(int)(i*ceil)]);
-        //}
 	}
-	/*
-	void Scale(double xScale, double yScale, int width, int height)
-	{
-        xScale1 = width/((BorderMaxX - BorderMinX)*ceil);
-        yScale1 = 1;
-        tmp1 = yGraph[0];
-        tmp2 = yGraph[0];
-        for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
-        {
-      	  if (yGraph[(int)Math.round((i - BorderMinX)*ceil)] > tmp1)
-      		  tmp1 = yGraph[(int)Math.round((i - BorderMinX)*ceil)];
-      	  if (yGraph[(int)Math.round((i - BorderMinX)*ceil)] < tmp2)
-      		  tmp2 = yGraph[(int)Math.round((i - BorderMinX)*ceil)];
-        }
-        yScale1 = height/(tmp1 - tmp2);
-        xScale1 *= 0.5;
-        yScale1 *= 0.5;
-        System.out.println("<<<" + xScale1 + " " + yScale1 + ">>>");
-		/*
-        for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
-        {
-      	  xGraph[(int)Math.round((i - BorderMinX)*ceil)] *= xScale1;
-      	  yGraph[(int)Math.round((i - BorderMinX)*ceil)] *= yScale1;
-        }
-        //
-	}
-	
-	void MoveOnCenter(int width, int height)
-	{
-
-        PosX = 0;
-        PosY = 0;
-        tmp1 = xGraph[0];
-        tmp2 = xGraph[0];
-        for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
-        {
-      	  if (xGraph[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 > tmp1)
-      		  tmp1 = xGraph[(int)Math.round((i - BorderMinX)*ceil)]*xScale1;
-      	  if (xGraph[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 < tmp2)
-      		  tmp2 = xGraph[(int)Math.round((i - BorderMinX)*ceil)]*xScale1;
-        }
-        PosX = ((double)width - (tmp1 - tmp2));
-        tmp1 = yGraph[0];
-        tmp2 = yGraph[0];
-        for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
-        {
-      	  if (yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 > tmp1)
-      		  tmp1 = yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1;
-      	  if (yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 < tmp2)
-      		  tmp2 = yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1;
-        }
-        PosY = ((double)height - (tmp1 - tmp2))/(double)2;
-        if ((PosY > height/2)||(PosY < 0))
-      	  PosY = height/2;
-        //System.out.println("<<<" + PosX + " " + PosY + ">>>");
-        
-        /*
-        for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
-        {
-        	  xGraph[(int)Math.round((i - BorderMinX)*ceil)] += PosX;
-        	  yGraph[(int)Math.round((i - BorderMinX)*ceil)] += PosY;
-        }
-        //
-	}
-	*/
 	void DrawGraph(Graphics g)
 	{
         for (double i = BorderMinX; i <= BorderMaxX - 1/(double)ceil; i+= 1/(double)ceil)
         {
         	//g.setColor(Color.BLACK);
         	double x1 = xGraph[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 + PosX;
-        	double y1 = yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + height - PosY;
+        	double y1 = yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + PosY;
         	double x2 = xGraph[(int)Math.round((i - BorderMinX)*ceil)+1]*xScale1 + PosX;
-        	double y2 = yGraph[(int)Math.round((i - BorderMinX)*ceil)+1]*yScale1 + height - PosY;
+        	double y2 = yGraph[(int)Math.round((i - BorderMinX)*ceil)+1]*yScale1 + PosY;
 	  		  if (y1 < 0) y1 = -2;
 	  		  else if (y1 > height) y1 = height + 2;
 	  		  if (y2 < 0) y2 = -2;
 	  		  else if (y2 > height) y2 = height + 2;
       	  	g.drawLine(
-      	  			//*
       			  (int)Math.round(x1), 
       			  (int)Math.round(y1), 
       			  (int)Math.round(x2), 
       			  (int)Math.round(y2)
-      			  //*/
-      	  			/*
-        			  (int)Math.round(xGraph[(int)Math.round((i - BorderMinX)*ceil)]), 
-          			  (int)Math.round(yGraph[(int)Math.round((i - BorderMinX)*ceil)]), 
-          			  (int)Math.round(xGraph[(int)Math.round((i - BorderMinX)*ceil)+1]), 
-          			  (int)Math.round(yGraph[(int)Math.round((i - BorderMinX)*ceil)+1])
-          			  //*/
       			  );
-            //System.out.println("<<<" + ((int)Math.round(xGraph[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 + PosX))
-            //					+ " " + ((int)Math.round(yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + height - PosY)) + ">>>");
         }
 	}
 	static void DrawPoints(Graphics g)
@@ -190,7 +109,7 @@ public class Paint {
         {
       	  	g.drawOval(
       	  			(int)Math.round(PointsX[i]*xScale1 + PosX) - PointsRadius, 
-      	  			(int)Math.round(-PointsY[i]*yScale1 + height - PosY) - PointsRadius, 
+      	  			(int)Math.round(-PointsY[i]*yScale1 + PosY) - PointsRadius, 
       	  		    PointsRadius*2, 
       	  		    PointsRadius*2);
         }
@@ -249,12 +168,12 @@ public class Paint {
 		  		width = 400;
 		  		height = 400;
 		  		ceil = 20;
-		  		nApprox = 4;
+		  		nApprox = 2;
 		  		PointsRadius = 3;
 		  		BorderMinX = -20;
 		  		BorderMaxX = 20;
 		  		BorderMinY = -20;
 		  		BorderMaxY = 20;
-		  		ActionRadius = 0.5;
+		  		ActionRadius = 0.2;
 	}
 }
