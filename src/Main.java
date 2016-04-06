@@ -8,12 +8,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -34,6 +32,34 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     	return 0.5*x*x + Math.cos(2*x);
     }
 
+    public static void DrawInGraph(Graphics g)
+    {
+    	double ceil = Paint.ceil;
+    	double BorderMinX = Paint.BorderMinX;
+    	double BorderMaxX = Paint.BorderMaxX;
+    	double x1 = BorderMinX*Paint.xScale1 + Paint.PosX;
+    	double y1 = -ReturnY(BorderMinX)*Paint.yScale1 + Paint.PosY;
+        for (double i = BorderMinX+1/(double)ceil; i <= BorderMaxX - 1/(double)ceil; i+= 1/(double)ceil)
+        {
+        	double x2 = i*Paint.xScale1 + Paint.PosX;
+        	double y2 = -ReturnY(i)*Paint.yScale1 + Paint.PosY;
+        	//g.setColor(Color.BLACK);
+	  		if (y1 < 0) y1 = -2;
+	  		else if (y1 > Paint.height) y1 = Paint.height + 2;
+	  		if (y2 < 0) y2 = -2;
+	  		else if (y2 > Paint.height) y2 = Paint.height + 2;
+      	  	g.drawLine(
+      			  (int)Math.round(x1), 
+      			  (int)Math.round(y1), 
+      			  (int)Math.round(x2), 
+      			  (int)Math.round(y2)
+      			  );
+      	  	x1 = x2;
+      	  	y1 = y2;
+        }
+    	
+    }
+    
 	double MouseX, MouseY;
 	double MouseLastX = 0, MouseLastY = 0;
 	double MouseTransX, MouseTransY;
@@ -67,7 +93,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     	//t_Interp = new InterpMatrix(f);
     	//t_Approx = new Approx(f);
     	//t_Poly = new InterpPoly(f);
-    	GenPoints(100, 0.6, 1.1);
+    	GenPoints(5, 0.6, 1.1);
     	t_Interp = new InterpMatrix(size, X, Y);
     	t_Approx = new Approx(size, X, Y);
     	//t_Poly = new InterpPoly(size, X, Y);
@@ -117,6 +143,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     	 		  	//Paint t_Paint_Poly = new Paint(t_Poly);
     	 		  	Paint t_Paint_Approx = new Paint(t_Approx);
     	 		  	Paint.DrawPoints(g);
+    	 		  	DrawInGraph(g);
     	 		  	g.setColor(Color.MAGENTA);
     	 		  	t_Paint_Interp.DrawGraph(g);
     	 		  	g.setColor(Color.ORANGE);
@@ -129,6 +156,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     	 		  	//g.drawString("Input points ", 40 , 80);
     	 		  	g.drawString("x =  " + MouseTransX, 40 , Paint.height - 50);
     	 		  	g.drawString("y =  " + MouseTransY, 40 , Paint.height - 30);
+
     	 		  	//*/
     	 		  	//g.drawLine(0,0 ,getSize().width , getSize().height);// рисуем линию через весь размер экрана
     	 		  	//g.setColor(new Color (128,128,128));
@@ -151,7 +179,13 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
 	}
 	
     public static void main(String[] args){
-    	GetTableOutPut();
+    	//GetTableOutPut();
+    	System.out.println(Integral.CalcLeftIntegral(-1, 3, 10000));
+    	System.out.println(Integral.CalcMidIntegral(-1, 3, 10000));
+    	System.out.println(Integral.CalcRightIntegral(-1, 3, 10000));
+    	System.out.println(Integral.CalcTrapIntegral(-1, 3, 10000));
+    	System.out.println(Integral.CalcSimpIntegral(-1, 3, 10000));
+    	System.out.println(Integral.CalcMonteIntegral(-1, 3, 10000));
     	new Main();
     }
     
@@ -164,35 +198,37 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     
     static InterpMatrix t_InterpTmp;
     
-    public static double DeltaF1()
+    public static double DeltaF1(double step)
     {
     	double max = 0, now = 0;
-    	for (int i = 0; i < size; i++)
+    	//System.out.println("\n" + size + "\n");
+    	for (double i = LeftBorder; i <= RightBorder; i+= 1/step)
     	{
-    		now = Math.abs(t_InterpTmp.getValue(X[i]) - Y[i]);
+    		now = Math.abs(t_InterpTmp.getValue(i) - ReturnY(i));
+    		//System.out.println(t_InterpTmp.getValue(X[i]) - Y[i]);
     		max = (now > max)?now:max;
     	}
     	return max;
     }
     
-    public static double DeltaF2()
+    public static double DeltaF2(double step)
     {
     	double max = 0, now = 0, ytmp;
-    	for (int i = 0; i < size; i++)
+    	for (double i = LeftBorder; i <= RightBorder; i+= 1/step)
     	{
-    		ytmp = Math.abs(Y[i]);
-    		now = (Math.abs(t_InterpTmp.getValue(X[i]) - Y[i])/(ytmp/*>0?ytmp:1*/))*100;
+    		ytmp = Math.abs(ReturnY(i));
+    		now = (Math.abs(t_InterpTmp.getValue(i) - ReturnY(i))/(ytmp!=0?ytmp:1))*100;
     		max = (now > max)?now:max;
     	}
     	return max;
     }
     
-    public static double Taylor()
+    public static double Taylor(double step)
     {
     	double max = 0, now = 0;
-    	for (int i = 0; i < size; i ++)
+    	for (double i = LeftBorder; i <= RightBorder; i+= 1/step)
     	{
-    		now = Math.abs(Y[i]);
+    		now = Math.abs(ReturnY(i));
     		max = (now > max)?now:max;
     	}
     	return ((max/Factorial(size))*Math.pow((RightBorder - LeftBorder), size));
@@ -201,6 +237,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     public static void GetTableOutPut()
     {
     	File fout = new File("Table.txt"); 
+    	double step = 100000;
         try {
             //проверяем, что если файл не существует то создаем его
             if(!fout.exists()){
@@ -219,7 +256,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
                 		//Thread.sleep(200);
                     	GenPoints(i, 0.6, 1.1);
                     	t_InterpTmp = new InterpMatrix(size, X, Y);
-                    	out.println(i + "\t\t" + DeltaF1()+ "\t\t" + DeltaF2()+ "\t\t" + Taylor());
+                    	out.println(i + "\t\t" + DeltaF1(step)+ "\t\t" + DeltaF2(step)+ "\t\t" + Taylor(step));
                     	//obj.t_Interp = t_InterpTmp;
                     	//obj.repaint();
                 	//} catch (InterruptedException e) {
@@ -279,8 +316,8 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
 		MouseLastY = PosYVec;
 		for (int i = 0; i < Paint.size; i++)
 		{
-			if ((Paint.PointsX[i] > MouseTransX - Paint.ActionRadius)&&
-				(Paint.PointsX[i] < MouseTransX + Paint.ActionRadius))
+			if ((Paint.PointsX[i] - 0.1 > MouseTransX - Paint.ActionRadius)&&
+				(Paint.PointsX[i] - 0.1 < MouseTransX + Paint.ActionRadius))
 				if ((Paint.PointsY[i] > MouseTransY - Paint.ActionRadius)&&
 					(Paint.PointsY[i] < MouseTransY + Paint.ActionRadius))
 				{
