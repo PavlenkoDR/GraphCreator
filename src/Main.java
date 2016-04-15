@@ -25,12 +25,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
 	File f;
 	InterpMatrix t_Interp;
 	//final InterpPoly t_Poly;
-	final Approx t_Approx;
-	
-    public static double ReturnY(double x)
-    {
-    	return 0.5*x*x + Math.cos(2*x);
-    }
+	Approx t_Approx;
 
     public static void DrawInGraph(Graphics g)
     {
@@ -38,11 +33,11 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     	double BorderMinX = Paint.BorderMinX;
     	double BorderMaxX = Paint.BorderMaxX;
     	double x1 = BorderMinX*Paint.xScale1 + Paint.PosX;
-    	double y1 = -ReturnY(BorderMinX)*Paint.yScale1 + Paint.PosY;
+    	double y1 = -Function.ReturnY(BorderMinX)*Paint.yScale1 + Paint.PosY;
         for (double i = BorderMinX+1/(double)ceil; i <= BorderMaxX - 1/(double)ceil; i+= 1/(double)ceil)
         {
         	double x2 = i*Paint.xScale1 + Paint.PosX;
-        	double y2 = -ReturnY(i)*Paint.yScale1 + Paint.PosY;
+        	double y2 = -Function.ReturnY(i)*Paint.yScale1 + Paint.PosY;
         	//g.setColor(Color.BLACK);
 	  		if (y1 < 0) y1 = -2;
 	  		else if (y1 > Paint.height) y1 = Paint.height + 2;
@@ -177,15 +172,15 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
 	    setVisible(true);
 		
 	}
-	
+	//======================================================================================================
     public static void main(String[] args){
     	//GetTableOutPut();
-    	System.out.println(Integral.CalcLeftIntegral(-1, 3, 10000));
-    	System.out.println(Integral.CalcMidIntegral(-1, 3, 10000));
-    	System.out.println(Integral.CalcRightIntegral(-1, 3, 10000));
-    	System.out.println(Integral.CalcTrapIntegral(-1, 3, 10000));
-    	System.out.println(Integral.CalcSimpIntegral(-1, 3, 10000));
-    	System.out.println(Integral.CalcMonteIntegral(-1, 3, 10000));
+    	//Integral.GetTable(0.124062);
+    	//GenPoints(11, 0.6, 1.1);
+    	//DividedDifferences t_DividedDifferences;
+    	//t_DividedDifferences = new DividedDifferences(size, X, Y);
+    	//System.out.println(t_DividedDifferences.NewtonsFirstFormula(0.62));
+    	//System.out.println(Function.GetDifferentialInPoint(1, 2));
     	new Main();
     }
     
@@ -198,26 +193,26 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     
     static InterpMatrix t_InterpTmp;
     
-    public static double DeltaF1(double step)
+    public static double DeltaFAbsolute(double step)
     {
     	double max = 0, now = 0;
     	//System.out.println("\n" + size + "\n");
     	for (double i = LeftBorder; i <= RightBorder; i+= 1/step)
     	{
-    		now = Math.abs(t_InterpTmp.getValue(i) - ReturnY(i));
+    		now = Math.abs(t_InterpTmp.getValue(i) - Function.ReturnY(i));
     		//System.out.println(t_InterpTmp.getValue(X[i]) - Y[i]);
     		max = (now > max)?now:max;
     	}
     	return max;
     }
     
-    public static double DeltaF2(double step)
+    public static double DeltaFOtmosit(double step)
     {
     	double max = 0, now = 0, ytmp;
     	for (double i = LeftBorder; i <= RightBorder; i+= 1/step)
     	{
-    		ytmp = Math.abs(ReturnY(i));
-    		now = (Math.abs(t_InterpTmp.getValue(i) - ReturnY(i))/(ytmp!=0?ytmp:1))*100;
+    		ytmp = Math.abs(Function.ReturnY(i));
+    		now = (Math.abs(t_InterpTmp.getValue(i) - Function.ReturnY(i))/(ytmp!=0?ytmp:1))*100;
     		max = (now > max)?now:max;
     	}
     	return max;
@@ -228,7 +223,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     	double max = 0, now = 0;
     	for (double i = LeftBorder; i <= RightBorder; i+= 1/step)
     	{
-    		now = Math.abs(ReturnY(i));
+    		now = Math.abs(Function.ReturnY(i));
     		max = (now > max)?now:max;
     	}
     	return ((max/Factorial(size))*Math.pow((RightBorder - LeftBorder), size));
@@ -236,7 +231,7 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     
     public static void GetTableOutPut()
     {
-    	File fout = new File("Table.txt"); 
+    	File fout = new File("InterpolTable.txt"); 
     	double step = 100000;
         try {
             //проверяем, что если файл не существует то создаем его
@@ -249,14 +244,23 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
      
             try {
                 //Записываем текст у файл
-
+            	out.println("Power | Delta Absolute | Delta Otnos | Theoretics Error");
+            	out.println("\\hline");
+            	int SignAfterCommon = 12;
             	for (int i = 3; i <= 100; i++)
             	{
                 	//try {
                 		//Thread.sleep(200);
                     	GenPoints(i, 0.6, 1.1);
                     	t_InterpTmp = new InterpMatrix(size, X, Y);
-                    	out.println(i + "\t\t" + DeltaF1(step)+ "\t\t" + DeltaF2(step)+ "\t\t" + Taylor(step));
+                    	out.println(
+                    				"$"+i+"$&$" + 
+                    				GetRound(DeltaFAbsolute(step), SignAfterCommon)+ "$&$" + 
+                    				GetRound(DeltaFOtmosit(step), SignAfterCommon) + "$&$" + 
+                    				GetRound(Taylor(step), SignAfterCommon) + 
+                    				"$\\\\"
+                    				);
+                    	out.println("\\hline");
                     	//obj.t_Interp = t_InterpTmp;
                     	//obj.repaint();
                 	//} catch (InterruptedException e) {
@@ -286,11 +290,18 @@ public class Main extends JFrame implements MouseListener, MouseMotionListener, 
     	for (double i = min; i <= max; i+= (max - min)/(n - 1))
     	{
     		X[k] = i;
-    		Y[k] = ReturnY(i);
+    		Y[k] = Function.ReturnY(i);
     		k++;
     	}
     	X[k] = max;
-    	Y[k] = ReturnY(max);
+    	Y[k] = Function.ReturnY(max);
+    }
+    
+    public static double GetRound(double x, int n)
+    {
+    	if (n < 0)
+    		return x;
+    	return new BigDecimal(x).setScale(n, RoundingMode.FLOOR).doubleValue();
     }
     
 	@Override

@@ -1,0 +1,30 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{graphicx}
+\usepackage{cancel}
+\graphicspath{}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
+\begin{document}
+
+\begin{titlepage}
+  \begin{center}
+    \large
+    МИНИСТЕРСТВО ОБРАЗОВАНИЯ И НАУКИ РОССИЙСКОЙ ФЕДЕРАЦИИ\\
+    Федеральное государственное автономное образовательное учреждение высшего профессионального образования\\
+    \textbf {"Дальневосточный федеральный университет"}
+    \vspace{0.25cm}
+     \hline
+      \vspace{0.25cm}
+   ШКОЛА ЕСТЕСТВЕННЫХ НАУК
+    
+    Кафедра прикладной математики и информатики
+    \vfill
+
+    \textsc{Отчет\\
+    по лабораторной работе №4 на тему }\\[5mm]
+    
+    {\LARGE "Численное интегрирование"\\}
+  \bigskip
+  \textsc {
