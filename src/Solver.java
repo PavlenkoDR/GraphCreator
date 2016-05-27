@@ -9,6 +9,7 @@ public class Solver {
 	{
 		return size;
 	}
+	//Инициализация матриц и тп
 	public void Init()
 	{
 		boolean ask = false;
@@ -61,6 +62,7 @@ public class Solver {
 		U = new double[size][size];
 		GetLU();
 	}
+	//Инициализировать матрицей(Если изначально юзали пустой конструктор, или хотим переписать матрицы)
 	public void Init(int _size, double[][]_A)
 	{
 		boolean ask = false;
@@ -82,6 +84,7 @@ public class Solver {
 		else
 			return;
 	}
+	//Получить L и U матрицы
 	private void GetLU()
 	{
 		if (size == 0) 
@@ -119,6 +122,7 @@ public class Solver {
             }
         }
 	}
+	//Отобразить матрицы
 	public void OutputData()
 	{
 		System.out.println();
@@ -152,6 +156,7 @@ public class Solver {
 		}
 		System.out.println();
 	}
+	//Получить вектор х
 	public double[] getSolv(double[] F)
 	{
 		double y[] = new double[size];

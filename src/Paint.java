@@ -7,89 +7,61 @@ public class Paint {
 	static double BorderMaxX = 20;
 	static double BorderMinY = -20;
 	static double BorderMaxY = 20;
+    static double ceil = 20;
 	
     double tmp1;
     double tmp2;
-    static double ceil = 5;
-    double xGraph[];
-    double yGraph[];
+    double xGraphPoly[];
+    double yGraphPoly[];
+    double xGraphApprox[];
+    double yGraphApprox[];
+    double xScale1 = 16;
+    double yScale1 = 16;
+    double PosX = 0;
+    double PosY = 0;
+    double ActionRadius = 0.5;
+    
+    int width;
+    int height;
+    
+    static int PointsRadius = 3;
+    static int ActionPoint = -1;
 
-    static double PointsX[];
-    static double PointsY[];
+    Function func;
     
-    static int size;
-
-    static double xScale1 = 1;
-    static double yScale1 = 1;
-    
-    static int width;
-    static int height;
-
-    static double PosX = 0;
-    static double PosY = 0;
-    
-    static int nApprox = 2;
-    
-    static int PointsRadius;
-    
-    static double ActionRadius;
-    static int ActionPoint;
-    
-	Paint(InterpMatrix t_Interp)
+	Paint(int _width, int _height)
 	{
-		PointsX = t_Interp.GetPointsX();
-		PointsY = t_Interp.GetPointsY();
-		size = t_Interp.GetSize();
+  		width = _width;
+  		height = _height;
 
-        xGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
-        yGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
+		xGraphPoly = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
+		yGraphPoly = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
+		xGraphApprox = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
+		yGraphApprox = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
         //g.setColor(Color.BLACK);
-        for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
-        {
-	  		  xGraph[(int)Math.round((i - BorderMinX)*ceil)] = i;
-	  		  yGraph[(int)Math.round((i - BorderMinX)*ceil)] = -(t_Interp.getValue(i));
-        }
 	}
-	
-	Paint(InterpPoly t_Interp)
+	void SetFunc(Function _func)
 	{
-		PointsX = t_Interp.GetPointsX();
-		PointsY = t_Interp.GetPointsY();
-		size = t_Interp.GetSize();
-
-        xGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
-        yGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
-        //g.setColor(Color.BLACK);
+		func = _func;
+		if (func.GetPointsFlag)
         for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
         {
-	  		  xGraph[(int)Math.round((i - BorderMinX)*ceil)] = i;
-	  		  yGraph[(int)Math.round((i - BorderMinX)*ceil)] = -t_Interp.getValue(i);
+        	xGraphPoly[(int)Math.round((i - BorderMinX)*ceil)] = i;
+        	yGraphPoly[(int)Math.round((i - BorderMinX)*ceil)] = -(func.interp.getValue(i));
+	  		xGraphApprox[(int)Math.round((i - BorderMinX)*ceil)] = i;
+	  		yGraphApprox[(int)Math.round((i - BorderMinX)*ceil)] = -(func.approx.getValue(i, func.nApprox));
         }
 	}
-	
-	Paint(Approx t_Approx)
-	{
-		PointsX = t_Approx.GetPointsX();
-		PointsY = t_Approx.GetPointsY();
-		size = t_Approx.GetSize();
 
-        xGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
-        yGraph = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
-        for (double i = BorderMinX; i <= BorderMaxX; i+= 1/(double)ceil)
-        {
-	  		  xGraph[(int)Math.round((i - BorderMinX)*ceil)] = i;
-	  		  yGraph[(int)Math.round((i - BorderMinX)*ceil)] = -(t_Approx.getValue(i, nApprox));
-        }
-	}
-	void DrawGraph(Graphics g)
+	void DrawGraphPoly(Graphics g)
 	{
         for (double i = BorderMinX; i <= BorderMaxX - 1/(double)ceil; i+= 1/(double)ceil)
         {
         	//g.setColor(Color.BLACK);
-        	double x1 = xGraph[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 + PosX;
-        	double y1 = yGraph[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + PosY;
-        	double x2 = xGraph[(int)Math.round((i - BorderMinX)*ceil)+1]*xScale1 + PosX;
-        	double y2 = yGraph[(int)Math.round((i - BorderMinX)*ceil)+1]*yScale1 + PosY;
+        	double x1 = xGraphPoly[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 + PosX;
+        	double y1 = yGraphPoly[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + PosY;
+        	double x2 = xGraphPoly[(int)Math.round((i - BorderMinX)*ceil)+1]*xScale1 + PosX;
+        	double y2 = yGraphPoly[(int)Math.round((i - BorderMinX)*ceil)+1]*yScale1 + PosY;
 	  		  if (y1 < 0) y1 = -2;
 	  		  else if (y1 > height) y1 = height + 2;
 	  		  if (y2 < 0) y2 = -2;
@@ -102,24 +74,45 @@ public class Paint {
       			  );
         }
 	}
-	static void DrawPoints(Graphics g)
+	
+	void DrawGraphApprox(Graphics g)
 	{
-    	g.setColor(Color.RED);
-        for (int i = 0; i < size; i++)
+        for (double i = BorderMinX; i <= BorderMaxX - 1/(double)ceil; i+= 1/(double)ceil)
+        {
+        	//g.setColor(Color.BLACK);
+        	double x1 = xGraphApprox[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 + PosX;
+        	double y1 = yGraphApprox[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + PosY;
+        	double x2 = xGraphApprox[(int)Math.round((i - BorderMinX)*ceil)+1]*xScale1 + PosX;
+        	double y2 = yGraphApprox[(int)Math.round((i - BorderMinX)*ceil)+1]*yScale1 + PosY;
+	  		  if (y1 < 0) y1 = -2;
+	  		  else if (y1 > height) y1 = height + 2;
+	  		  if (y2 < 0) y2 = -2;
+	  		  else if (y2 > height) y2 = height + 2;
+      	  	g.drawLine(
+      			  (int)Math.round(x1), 
+      			  (int)Math.round(y1), 
+      			  (int)Math.round(x2), 
+      			  (int)Math.round(y2)
+      			  );
+        }
+	}
+	void DrawPoints(Graphics g)
+	{
+        for (int i = 0; i < func.size; i++)
         {
       	  	g.drawOval(
-      	  			(int)Math.round(PointsX[i]*xScale1 + PosX) - PointsRadius, 
-      	  			(int)Math.round(-PointsY[i]*yScale1 + PosY) - PointsRadius, 
+      	  			(int)Math.round(func.X[i]*xScale1 + PosX) - PointsRadius, 
+      	  			(int)Math.round(-func.Y[i]*yScale1 + PosY) - PointsRadius, 
       	  		    PointsRadius*2, 
       	  		    PointsRadius*2);
         }
 	}
 	
-	static void DrawGrid(Graphics g)
+	void DrawGrid(Graphics g)
 	{
     	g.setColor(new Color(220, 220, 220));
-		for (double i = BorderMinX*xScale1; i <= BorderMaxX*xScale1; i+= xScale1)
-			for (double j = BorderMinY*yScale1; j <= BorderMaxY*yScale1; j+= yScale1)
+		for (double i = (BorderMinX)*xScale1; i <= (BorderMaxX)*xScale1; i+= xScale1)
+			for (double j = (BorderMinY)*yScale1; j <= (BorderMaxY)*yScale1; j+= yScale1)
 			{
 	      	  	g.drawLine(
 	      	  			(int)Math.round(i + PosX), 
@@ -135,7 +128,41 @@ public class Paint {
 		      			  );
 			}
 	}
-	static void DrawCoord(Graphics g)
+	void DrawGridHard(Graphics g)
+	{
+    	g.setColor(new Color(220, 220, 220));
+    	double stepXLeft = BorderMinX;
+    	double stepXRight = BorderMaxX;
+    	double stepYLeft = BorderMinX;
+    	double stepYRight = BorderMaxX;
+
+    	while(stepXLeft*xScale1 + PosX > 0)
+    		stepXLeft--;
+    	while(stepXRight*xScale1 + PosX < width)
+    		stepXRight++;
+    	while(stepYLeft*yScale1 + PosY > 0)
+    		stepYLeft--;
+    	while(stepYRight*yScale1 + PosY < height)
+    		stepYRight++;
+    	
+		for (double i = stepXLeft*xScale1; i <= stepXRight*xScale1; i+= xScale1)
+			for (double j = stepYLeft*yScale1; j <= stepYRight*yScale1; j+= yScale1)
+			{
+	      	  	g.drawLine(
+	      	  			(int)Math.round(i + PosX), 
+	      	  			(int)Math.round(0), 
+	      	  			(int)Math.round(i + PosX), 
+	      	  			(int)Math.round(height)
+	      			  );
+	      	  	g.drawLine(
+		      			(int)Math.round(0), 
+		      			(int)Math.round(j + PosY), 
+		      			(int)Math.round(width), 
+		      			(int)Math.round(j + PosY)
+		      			  );
+			}
+	}
+	void DrawCoord(Graphics g)
 	{
     	g.setColor(new Color(0, 0, 0));
 
@@ -155,25 +182,8 @@ public class Paint {
       			(int)Math.round(PosY)
       			  );
 		g.drawString("X", 
-				((int)Math.round(BorderMaxX*xScale1 + PosX) - 10 < width - 10)?((int)Math.round(BorderMaxX*xScale1 + PosX) - 10):(width - 10), 
+				((int)Math.round(BorderMaxX*xScale1 + PosX)< 10/*width*/)?((int)Math.round(BorderMaxX*xScale1 + PosX) - 10):(10/*width*/ - 10), 
 				(int)Math.round(PosY) - 10);
 	}
-	
-	static void DefaultSetting()
-	{
-		  		xScale1 = 16;
-		  		yScale1 = 16;
-		  		PosX = 100;
-		  		PosY = 100;
-		  		width = 400;
-		  		height = 400;
-		  		ceil = 20;
-		  		nApprox = 2;
-		  		PointsRadius = 3;
-		  		BorderMinX = -20;
-		  		BorderMaxX = 20;
-		  		BorderMinY = -20;
-		  		BorderMaxY = 20;
-		  		ActionRadius = 0.2;
-	}
+
 }

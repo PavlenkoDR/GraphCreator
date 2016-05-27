@@ -1,47 +1,62 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 
 public class Function {
-	
-	public static double Differentials[];
+	public double X[];
+	public double Y[];
 	public int size;
+	public InterpMatrix interp;
+	public Approx approx;
+    int nApprox = 2;
+	public boolean GetPointsFlag = false;
 	
-    public static double ReturnY(double x)
-    {
-    	return 0.5*x*x + Math.cos(2*x);
-    }
-    
-	private static double _GetDifferentialInPoint(double x, int n)
+	public Function(int _size, double[] _X, double[] _F)
 	{
-		double e = 0.00000001;
-		double dx = 0.01;
-		double f1 = -1000000, f2 = 0;
-		if (n == 1)
-		{
-			while(Math.abs(f2 - f1) >= e)
-			{
-			    f2 = f1;
-			    f1 = (ReturnY(x + dx) - ReturnY(x)) / dx;
-			    dx /= 2;
-			}
-		}
-		else
-		{
-			while(Math.abs(f1 - f2) >= e)
-			{
-			    f2 = f1;
-			    f1 = (_GetDifferentialInPoint(x + dx, n - 1) - _GetDifferentialInPoint(x, n - 1)) / dx;
-			    dx /= 2;
-			}
-		}
-		return f1;
+		interp = new InterpMatrix(_size, _X, _F);
+		approx = new Approx(_size, _X, _F);
+    	size = _size;
+    	X = _X;
+    	Y = _F;
+	    nApprox = 2;
+    	GetPointsFlag = true;
 	}
-	public static double GetDifferentialInPoint(double x, int n)
-	{
-		if (n < 1)
-		{
-			System.out.println("ERROR: n < 1");
-			return 0;
+	
+	public Function(File f){
+		Scanner in;
+		try {
+			in = new Scanner(f);
+			size = in.nextInt();
+			X = new double[size];
+			Y = new double[size];
+			for (int i = 0; i < size; i++)
+				X[i] = in.nextDouble();
+			for (int i = 0; i < size; i++)
+				Y[i] = in.nextDouble();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
-		double result = _GetDifferentialInPoint(x, n);
-		return result;
+		interp = new InterpMatrix(size, X, Y);
+		approx = new Approx(size, X, Y);
+	    nApprox = 2;
+    	GetPointsFlag = true;
+	};
+
+	public Function(Function func){
+    	GetPointsFlag = func.GetPointsFlag;
+    	size = func.size;
+    	nApprox = func.nApprox;
+    	X = func.X;
+    	Y = func.Y;
+    	interp = func.interp;
+    	approx = func.approx;
 	}
+	
+	public Function(){
+    	GetPointsFlag = false;
+    	size = 0;
+    	nApprox = 2;
+	}
+	
 }

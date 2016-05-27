@@ -1,39 +1,21 @@
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 
 
-public class InterpMatrix {
-	public double X[];
-	public double F[];
-	protected double a[];
-	int size;
-	protected double A[][];
-	Solver LU;
-	Scanner in;
+public class InterpMatrix extends BasePoly{
+
+	//Инициализировать класс по X и F
 	public InterpMatrix(int _size, double[] _X, double[] _F) {
-		X = _X;
-		F = _F;
-		size = _size;
+		super(_size, _X, _F);
 		A = new double [size][size];
 		InitMatrix();
 	}
+	//Инициализировать по файлу
 	public InterpMatrix(File f) {
-		try {
-			in = new Scanner(f);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		size = in.nextInt();
-		X = new double[size];
-		F = new double[size];
-		for (int i = 0; i < size; i++)
-			X[i] = in.nextDouble();
-		for (int i = 0; i < size; i++)
-			F[i] = in.nextDouble();
+		super(f);
 		A = new double [size][size];
 		InitMatrix();
 	}
+	//Создать матрицу. Нужна для LU
 	public void InitMatrix()
 	{
 		for (int i = 0; i < size - 1; i++)
@@ -60,6 +42,7 @@ public class InterpMatrix {
 		LU = new Solver(size, A);
 		a = LU.getSolv(F);
 	}
+	//Отобразить матрицу
 	public void OutputData()
 	{
 		if (LU == null)
@@ -78,17 +61,6 @@ public class InterpMatrix {
 			LU.OutputData();
 		}
 	}
-	public double getValue(double x)
-	{
-		double tmp = 0;
-		double xtmp = 1;
-		for (int i = 0; i < size; i++)
-		{
-			tmp += xtmp*a[i];
-			xtmp *= x;
-		}
-		return tmp;
-	}
 	public double [] GetPointsX()
 	{
 		return X;
@@ -100,5 +72,7 @@ public class InterpMatrix {
 	public int GetSize()
 	{
 		return size;
-	}
+	}    
+    
+    
 }
