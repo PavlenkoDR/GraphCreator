@@ -187,16 +187,18 @@ public class CHMIntegral {
                 //Записываем текст у файл
             	//long currentTime = 0, deltaCurrentTime = 0;
             	double integral = 0;
-            	double left = 0.6, right = 1.1;
+            	double left = 0.4, right = 0.9;
             	double DeltaPrevios = 1, DeltaCurrent;
             	int degree = 16;
             	out.println("Expreriment number | Power | " + /*"Time of work | " + */ "Value of Integral | Absolute | Otnosit | R(x) | Speed of Convergence");
             	out.println();
-            	out.println("==================================================================== Left Integral ====================================================================");
+            	out.println("========== Left Integral ==========\\\\");
             	int step = 10000;
             	double h;
             	int n = 2;
             	int SignAfterCommon = 8;
+
+            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
@@ -216,11 +218,13 @@ public class CHMIntegral {
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
+            	out.print("\\end{tabular}");
             	out.println();
+            	out.println("========== Midle Integral ==========\\\\");
+            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
-            	out.println("==================================================================== Midle Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
@@ -240,11 +244,13 @@ public class CHMIntegral {
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
+            	out.print("\\end{tabular}");
             	out.println();
+            	out.println("========== Right Integral ==========\\\\");
+            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
-            	out.println("==================================================================== Right Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
@@ -264,11 +270,13 @@ public class CHMIntegral {
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
+            	out.print("\\end{tabular}");
             	out.println();
+            	out.println("========== Trapeciya Integral ==========\\\\");
+            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
-            	out.println("==================================================================== Trapeciya Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
@@ -288,11 +296,13 @@ public class CHMIntegral {
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
+            	out.print("\\end{tabular}");
             	out.println();
+            	out.println("========== Simpson Integral ==========\\\\");
+            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
-            	out.println("==================================================================== Simpson Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
@@ -312,11 +322,13 @@ public class CHMIntegral {
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
+            	out.print("\\end{tabular}");
             	out.println();
+            	out.println("========== MonteCarlo Integral ==========\\\\");
+            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
-            	out.println("==================================================================== MonteCarlo Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
@@ -336,8 +348,11 @@ public class CHMIntegral {
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
+            	out.print("\\end{tabular}");
+            	out.println("\\newpage");
+            	out.println("========== n = 10000 ==========\\\\");
+            	out.print("\\begin{tabular}{| c | c | c | c | c | c |}\n\\hline\nМетод &I &$\\bigtriangleup I_n$  & $\\delta I_n$   & $R_n$  \\\\ \\hline\n");
             	System.out.println("<");
-            	out.println("==================================================================== n = 10000 ====================================================================");
             	h = (right - left)/((double)10000);
         		integral = CHMIntegral.CalcLeftIntegral(left, right, -1);
             	out.println(	"Left"+ "&" + 
@@ -348,7 +363,7 @@ public class CHMIntegral {
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
             	out.println("\\hline");
         		integral = CHMIntegral.CalcMidIntegral(left, right, -1);
-            	out.println(	"Left"+ "&" + 
+            	out.println(	"Midl"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
@@ -356,7 +371,7 @@ public class CHMIntegral {
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
             	out.println("\\hline");
         		integral = CHMIntegral.CalcRightIntegral(left, right, -1);
-            	out.println(	"Left"+ "&" + 
+            	out.println(	"Right"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
@@ -364,7 +379,7 @@ public class CHMIntegral {
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
             	out.println("\\hline");
         		integral = CHMIntegral.CalcTrapIntegral(left, right, -1);
-            	out.println(	"Left"+ "&" + 
+            	out.println(	"Trap"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
@@ -372,7 +387,7 @@ public class CHMIntegral {
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
             	out.println("\\hline");
         		integral = CHMIntegral.CalcSimpIntegral(left, right, -1);
-            	out.println(	"Left"+ "&" + 
+            	out.println(	"Simp"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
@@ -380,13 +395,14 @@ public class CHMIntegral {
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
             	out.println("\\hline");
         		integral = CHMIntegral.CalcMonteIntegral(left, right, -1);
-            	out.println(	"Left"+ "&" + 
+            	out.println(	"Monte"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
             	out.println("\\hline");
+            	out.print("\\end{tabular}");
             	System.out.println("Done");
             } finally {
                 //После чего мы должны закрыть файл

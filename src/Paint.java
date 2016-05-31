@@ -55,13 +55,24 @@ public class Paint {
 
 	void DrawGraphPoly(Graphics g)
 	{
+		_DrawGraph(g, xGraphPoly, yGraphPoly);
+	}
+	
+	void DrawGraphApprox(Graphics g)
+	{
+		_DrawGraph(g, xGraphApprox, yGraphApprox);
+	}
+
+
+	private void _DrawGraph(Graphics g, double[] _x, double[] _y)
+	{
         for (double i = BorderMinX; i <= BorderMaxX - 1/(double)ceil; i+= 1/(double)ceil)
         {
         	//g.setColor(Color.BLACK);
-        	double x1 = xGraphPoly[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 + PosX;
-        	double y1 = yGraphPoly[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + PosY;
-        	double x2 = xGraphPoly[(int)Math.round((i - BorderMinX)*ceil)+1]*xScale1 + PosX;
-        	double y2 = yGraphPoly[(int)Math.round((i - BorderMinX)*ceil)+1]*yScale1 + PosY;
+        	double x1 = _x[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 + PosX;
+        	double y1 = _y[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + PosY;
+        	double x2 = _x[(int)Math.round((i - BorderMinX)*ceil)+1]*xScale1 + PosX;
+        	double y2 = _y[(int)Math.round((i - BorderMinX)*ceil)+1]*yScale1 + PosY;
 	  		  if (y1 < 0) y1 = -2;
 	  		  else if (y1 > height) y1 = height + 2;
 	  		  if (y2 < 0) y2 = -2;
@@ -75,15 +86,15 @@ public class Paint {
         }
 	}
 	
-	void DrawGraphApprox(Graphics g)
+	void DrawGraph(Graphics g, double[] _x, double[] _y, int n)
 	{
-        for (double i = BorderMinX; i <= BorderMaxX - 1/(double)ceil; i+= 1/(double)ceil)
+        for (int i = 0; i < n - 1; i++)
         {
         	//g.setColor(Color.BLACK);
-        	double x1 = xGraphApprox[(int)Math.round((i - BorderMinX)*ceil)]*xScale1 + PosX;
-        	double y1 = yGraphApprox[(int)Math.round((i - BorderMinX)*ceil)]*yScale1 + PosY;
-        	double x2 = xGraphApprox[(int)Math.round((i - BorderMinX)*ceil)+1]*xScale1 + PosX;
-        	double y2 = yGraphApprox[(int)Math.round((i - BorderMinX)*ceil)+1]*yScale1 + PosY;
+        	double x1 = _x[i]*xScale1 + PosX;
+        	double y1 = _y[i]*yScale1 + PosY;
+        	double x2 = _x[i+1]*xScale1 + PosX;
+        	double y2 = _y[i+1]*yScale1 + PosY;
 	  		  if (y1 < 0) y1 = -2;
 	  		  else if (y1 > height) y1 = height + 2;
 	  		  if (y2 < 0) y2 = -2;
@@ -96,6 +107,7 @@ public class Paint {
       			  );
         }
 	}
+	
 	void DrawPoints(Graphics g)
 	{
         for (int i = 0; i < func.size; i++)

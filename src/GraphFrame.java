@@ -165,4 +165,15 @@ public class GraphFrame extends JFrame{
 		Graph.boolDrawGraphApprox = true;
 		Graph.repaint();
 	}
+	public void DrawSpline()
+	{
+		Graph.boolDrawGraphSpline = true;
+		Graph.repaint();
+	}
+	
+	public void DrawFur()
+	{
+		Graph.boolDrawGraphFur = true;
+		Graph.repaint();
+	}
 }

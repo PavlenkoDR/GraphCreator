@@ -25,7 +25,10 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	public double xScaleVec = 1, yScaleVec = 1;
 
 	public boolean editing;
-	public boolean boolDrawGraphApprox, boolDrawGraphPoly;
+	public boolean 	boolDrawGraphApprox, 
+					boolDrawGraphPoly,
+					boolDrawGraphFur,
+					boolDrawGraphSpline;
 	
 	Function func;
 	Paint paint;
@@ -53,6 +56,34 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	 		  	g.setColor(Color.BLUE);
 	   			g.drawString("Approximation " + func.nApprox + " power", 40 , 65);
 	 		  	if ((boolDrawGraphPoly)&&(func.GetPointsFlag)) paint.DrawGraphApprox(g);
+	 		  	if ((boolDrawGraphFur)&&(CHMFure.GetPointsFlag))
+	 		  	{
+		 		  	g.setColor(Color.GREEN);
+		   			g.drawString("Func", 40 , 95);
+		 		  	paint.DrawGraph(g, CHMFure.funcX, CHMFure.funcY, CHMFure.sizeFunc);
+
+		 		  	g.setColor(Color.ORANGE);
+		   			g.drawString("Fur", 40 , 110);
+		 		  	 paint.DrawGraph(g, CHMFure.furX, CHMFure.furY, CHMFure.sizeFur);
+
+		 		  	g.setColor(Color.RED);
+		   			g.drawString("Delta", 40 , 125);
+		 		  	paint.DrawGraph(g, CHMFure.deltaX, CHMFure.deltaY, CHMFure.sizeDelta);
+	 		  	}
+	 		  	if ((boolDrawGraphSpline)&&(CHMSpline.GetPointsFlag))
+	 		  	{
+		 		  	g.setColor(Color.GREEN);
+		   			g.drawString("Func", 40 , 95);
+		 		  	paint.DrawGraph(g, CHMSpline.funcX, CHMSpline.funcY, CHMSpline.sizeFunc);
+
+		 		  	g.setColor(Color.ORANGE);
+		   			g.drawString("Spline", 40 , 110);
+		 		  	paint.DrawGraph(g, CHMSpline.splineX, CHMSpline.splineY, CHMSpline.sizeSpline);
+
+		 		  	g.setColor(Color.RED);
+		   			g.drawString("Delta", 40 , 125);
+		 		  	paint.DrawGraph(g, CHMSpline.deltaX, CHMSpline.deltaY, CHMSpline.sizeDelta);
+	 		  	}
 	 		  	
 	 		  	g.setColor(Color.RED);
 	 		  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
