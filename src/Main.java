@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -5,11 +6,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+=======
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 
 public class Main {
 	GraphFrame frame;
     public static void main(String[] args){
     	new Main();
+<<<<<<< HEAD
     	System.out.println("Done!");
     }
     public static void replace(String fileName) {
@@ -24,10 +28,13 @@ public class Main {
         } catch (IOException e) {
 	        e.printStackTrace();
         }
+=======
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
     }
     Main()
     {
     	//CHMFure.GetResult(1.5);
+<<<<<<< HEAD
     	//CHMSpline.CreateDots();
     	//CHMSpline.GetTableOutPut();
     	//CHMFure.GetTableOutPut();
@@ -66,6 +73,17 @@ public class Main {
     	frame.DrawApprox();
     	//frame.DrawFur();
     	//frame.DrawSpline();
+=======
+    	//CHMFure.CreateDots();
+    	CHMSpline.CreateDots();
+    	System.out.println(CHMSqrt.NewTone(0.5, 1, 0.0001));
+    	System.out.println(CHMSqrt.Hord(0.5, 1, 0.0001));
+    	System.out.println(CHMSqrt.Dihot(0.5, 1, 0.0001));
+    	frame = new GraphFrame("Окошко", 600, 600);
+    	frame.DrawPolynom();
+    	frame.DrawApprox();
+    	frame.DrawSpline();
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
     	//CHMIntegral.GetTable(-0.0066415);
     }
 }

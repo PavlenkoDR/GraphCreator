@@ -5,15 +5,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 
-public class CHMIntegral {
+public class Integral {
 
-<<<<<<< HEAD
-=======
 	static double ReturnDefferential(double x)
 	{
 		return x - 2*Math.sin(2*x);
 	}
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	
 	static double CalcMidIntegral(double a, double b, int degre)
 	{
@@ -27,7 +24,7 @@ public class CHMIntegral {
 		h = (b - a) / n; //Шаг сетки
 		for(i = 0; i < n; i++)
 		{
-			result += CHMFunction.ReturnY(a + h * (i + 0.5)); //Вычисляем в средней точке и добавляем в сумму
+			result += Function.ReturnY(a + h * (i + 0.5)); //Вычисляем в средней точке и добавляем в сумму
 		}
 		result *= h;
 	  	return result;
@@ -45,7 +42,7 @@ public class CHMIntegral {
 	  h = (b - a) / n; //Шаг сетки
 	  for(i = 0; i < n; i++)
 	  {
-	    result += CHMFunction.ReturnY(a + h * i); //Вычисляем в левой точке и добавляем в сумму
+	    result += Function.ReturnY(a + h * i); //Вычисляем в левой точке и добавляем в сумму
 	  }
 	  result *= h;
 	  return result;
@@ -63,7 +60,7 @@ public class CHMIntegral {
 	  h = (b - a) / n; //Шаг сетки
 	  for(i = 0; i < n; i++)
 	  {
-	    result += CHMFunction.ReturnY(a + h * (i + 1)); //Вычисляем в правой точке и добавляем в сумму
+	    result += Function.ReturnY(a + h * (i + 1)); //Вычисляем в правой точке и добавляем в сумму
 	  }
 	  result *= h;
 	  return result;
@@ -81,9 +78,9 @@ public class CHMIntegral {
 	  h = (b - a) / n; //Шаг сетки
 	  for(i = 1; i < n - 1; i++)
 	  {
-	    result += CHMFunction.ReturnY(a + h*i)/* *(i + 1 - (i - 1)) / 2*/;
+	    result += Function.ReturnY(a + h*i)/* *(i + 1 - (i - 1)) / 2*/;
 	  }
-	  result = h*CHMFunction.ReturnY(a)*(a + h*1)/ 2 + h*result + h*CHMFunction.ReturnY(b)*(b - a + h*(n - 1))/2;
+	  result = h*Function.ReturnY(a)*(a + h*1)/ 2 + h*result + h*Function.ReturnY(b)*(b - a + h*(n - 1))/2;
 	  return result;
 	}
 
@@ -99,32 +96,13 @@ public class CHMIntegral {
 			System.out.println("Error: n % 2 != 0");
 			return 0;
 		}
-<<<<<<< HEAD
-	  double result = 0, h;
-	  h = (b - a) / (n); //Шаг сетки
-	  /*
-=======
 	  int i;
 	  double result = 0, h;
 	  h = (b - a) / (n); //Шаг сетки
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	  for(i = 1; i < n / 2; i++)
 	  {
-	    result += CHMFunction.ReturnY(a + h*i*2) + 4*CHMFunction.ReturnY(a + h*(i*2 + 1)) + CHMFunction.ReturnY(a + h*(i*2 + 2));
+	    result += Function.ReturnY(a + h*i*2) + 4*Function.ReturnY(a + h*(i*2 + 1)) + Function.ReturnY(a + h*(i*2 + 2));
 	  }
-<<<<<<< HEAD
-	  */
-	  result = CHMFunction.ReturnY(a) + CHMFunction.ReturnY(b);
-	  double sum1 = 0, sum2 = 0;
-	  for (int i = 1; i < (n-1)/2; i++)
-		  sum1 += CHMFunction.ReturnY(a + h*i*2);
-	  sum1 *=2;
-	  for (int i = 1; i < (n)/2; i++)
-		  sum2 += CHMFunction.ReturnY(a + h*(i*2-1));
-	  sum2*=4;
-	  result += sum1 + sum2;
-=======
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	  result *= h/3;
 	  return result;
 	}
@@ -154,7 +132,7 @@ public class CHMIntegral {
 	  double u[] = GetRandomMass(a, b, n);
 	  for(i = 0; i < n; i++)
 	  {
-	    result += CHMFunction.ReturnY(u[i]); //Вычисляем в левой точке и добавляем в сумму
+	    result += Function.ReturnY(u[i]); //Вычисляем в левой точке и добавляем в сумму
 	  }
 	  result *= h;
 	  return result;
@@ -174,31 +152,6 @@ public class CHMIntegral {
 	{
 		return DeltaPrevios/DeltaCurrent;
 	}
-<<<<<<< HEAD
-
-	static double ReturnDefferential(double x, int n)
-	{
-		double result = 0;
-		if (n == 1)
-			result =  x - 2*Math.sin(2*x);
-		else if (n == 2)
-			result =  1 - 4*Math.cos(2*x);
-		else
-			result = -Math.pow(2, n)*Math.cos(2*x + n*Math.PI/2);
-		return result;
-	}
-	
-	static double ThError(double a, double b, int n, int step)
-	{
-		double max = Math.abs(ReturnDefferential(a, 1));
-		double def;
-		for (double i = a; i <= b; i += 1/((double)step))
-		{
-			def = Math.abs(ReturnDefferential(i, 1));
-			max = (def > max) ? def : max;
-		}
-		return Math.pow((b-a), n)*max/Bicycles.Factorial(n);
-=======
 	
 	static double ThError(double a, double b, double h, int step)
 	{
@@ -210,7 +163,6 @@ public class CHMIntegral {
 			max = (def > max) ? def : max;
 		}
 		return max*h*(b-a)/((double)2);
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	}
     
     public static double GetRound(double x, int n)
@@ -235,307 +187,206 @@ public class CHMIntegral {
                 //Записываем текст у файл
             	//long currentTime = 0, deltaCurrentTime = 0;
             	double integral = 0;
-<<<<<<< HEAD
             	double left = 0.6, right = 1.1;
             	double DeltaPrevios = 1, DeltaCurrent;
-            	int degree = 15;
-=======
-            	double left = 0.4, right = 0.9;
-            	double DeltaPrevios = 1, DeltaCurrent;
             	int degree = 16;
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("Expreriment number | Power | " + /*"Time of work | " + */ "Value of Integral | Absolute | Otnosit | R(x) | Speed of Convergence");
             	out.println();
-            	out.println("========== Left Integral ==========\\\\");
+            	out.println("==================================================================== Left Integral ====================================================================");
             	int step = 10000;
             	double h;
             	int n = 2;
             	int SignAfterCommon = 8;
-
-            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
-            		integral = CHMIntegral.CalcLeftIntegral(left, right, i);
+            		integral = Integral.CalcLeftIntegral(left, right, i);
             		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
+            		DeltaCurrent = Integral.DeltaAbsolute(th, integral);
             		h = (right - left) / n;
             		n *= 2;
                 	out.println(	i+ "&" + "$2^{"+i+"}$" + "&" + 
         							//deltaCurrentTime + "" + 
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
-        							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-        							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
+        							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
-            	out.print("\\end{tabular}");
             	out.println();
-            	out.println("========== Midle Integral ==========\\\\");
-            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
+            	out.println("==================================================================== Midle Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
-            		integral = CHMIntegral.CalcMidIntegral(left, right, i);
+            		integral = Integral.CalcMidIntegral(left, right, i);
             		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
+            		DeltaCurrent = Integral.DeltaAbsolute(th, integral);
             		h = (right - left) / n;
             		n *= 2;
                 	out.println(	i+ "&" + "$2^{"+i+"}$" + "&" + 
         							//deltaCurrentTime + "" + 
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
-        							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-        							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
+        							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
-            	out.print("\\end{tabular}");
             	out.println();
-            	out.println("========== Right Integral ==========\\\\");
-            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
+            	out.println("==================================================================== Right Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
-            		integral = CHMIntegral.CalcRightIntegral(left, right, i);
+            		integral = Integral.CalcRightIntegral(left, right, i);
             		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
+            		DeltaCurrent = Integral.DeltaAbsolute(th, integral);
             		h = (right - left) / n;
             		n *= 2;
                 	out.println(	i+ "&" + "$2^{"+i+"}$" + "&" + 
         							//deltaCurrentTime + "" + 
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
-        							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-        							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
+        							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
-            	out.print("\\end{tabular}");
             	out.println();
-            	out.println("========== Trapeciya Integral ==========\\\\");
-            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
+            	out.println("==================================================================== Trapeciya Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
-            		integral = CHMIntegral.CalcTrapIntegral(left, right, i);
+            		integral = Integral.CalcTrapIntegral(left, right, i);
             		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
+            		DeltaCurrent = Integral.DeltaAbsolute(th, integral);
             		h = (right - left) / n;
             		n *= 2;
                 	out.println(	i+ "&" + "$2^{"+i+"}$" + "&" + 
         							//deltaCurrentTime + "" + 
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
-        							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-        							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
+        							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
-            	out.print("\\end{tabular}");
             	out.println();
-            	out.println("========== Simpson Integral ==========\\\\");
-            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
+            	out.println("==================================================================== Simpson Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
-<<<<<<< HEAD
+            		integral = Integral.CalcSimpIntegral(left, right, i);
             		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
+            		DeltaCurrent = Integral.DeltaAbsolute(th, integral);
             		h = (right - left) / n;
             		n *= 2;
-            		integral = CHMIntegral.CalcSimpIntegral(left, right, i);
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
-=======
-            		integral = CHMIntegral.CalcSimpIntegral(left, right, i);
-            		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
-            		h = (right - left) / n;
-            		n *= 2;
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
                 	out.println(	i+ "&" + "$2^{"+i+"}$" + "&" + 
         							//deltaCurrentTime + "" + 
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
-        							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-        							"$" + GetRound(ThError(left, right, i, step), SignAfterCommon) + "$" + "&" +
-=======
+        							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
-            	out.print("\\end{tabular}");
             	out.println();
-            	out.println("========== MonteCarlo Integral ==========\\\\");
-            	out.print("\\begin{tabular}{| c | c | c | c | c | c | c |}\n\\hline\n№&n&	I&$\\bigtriangleup I_n$&$\\delta I_n$&$R_n$&$\\frac{\\bigtriangleup I_{2j}}{\\bigtriangleup I_{2j+1}}$\\\\\\hline\n");
             	System.out.println("<");
             	DeltaPrevios = 1;
             	n = 2;
+            	out.println("==================================================================== MonteCarlo Integral ====================================================================");
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
-            		integral = CHMIntegral.CalcMonteIntegral(left, right, i);
+            		integral = Integral.CalcMonteIntegral(left, right, i);
             		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
+            		DeltaCurrent = Integral.DeltaAbsolute(th, integral);
             		h = (right - left) / n;
             		n *= 2;
                 	out.println(	i+ "&" + "$2^{"+i+"}$" + "&" + 
         							//deltaCurrentTime + "" + 
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
-        							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-        							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
+        							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
                 	System.out.print("!");
             	}
-            	out.print("\\end{tabular}");
-            	out.println("\\newpage");
-            	out.println("========== n = 10000 ==========\\\\");
-<<<<<<< HEAD
-            	out.print("\\begin{tabular}{| c | c | c | c | c |}\n\\hline\nМетод &I &$\\bigtriangleup I_n$  & $\\delta I_n$   & $R_n$  \\\\ \\hline\n");
-=======
-            	out.print("\\begin{tabular}{| c | c | c | c | c | c |}\n\\hline\nМетод &I &$\\bigtriangleup I_n$  & $\\delta I_n$   & $R_n$  \\\\ \\hline\n");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	System.out.println("<");
+            	out.println("==================================================================== n = 10000 ====================================================================");
             	h = (right - left)/((double)10000);
-        		integral = CHMIntegral.CalcLeftIntegral(left, right, -1);
+        		integral = Integral.CalcLeftIntegral(left, right, -1);
             	out.println(	"Left"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
-    							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
-    							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-    							"$" + "\\\\");
-=======
+    							"$" + GetRound(Integral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
+    							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
-        		integral = CHMIntegral.CalcMidIntegral(left, right, -1);
-            	out.println(	"Midl"+ "&" + 
+        		integral = Integral.CalcMidIntegral(left, right, -1);
+            	out.println(	"Left"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
-    							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
-    							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-    							"$" + "\\\\");
-=======
+    							"$" + GetRound(Integral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
+    							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
-        		integral = CHMIntegral.CalcRightIntegral(left, right, -1);
-            	out.println(	"Right"+ "&" + 
+        		integral = Integral.CalcRightIntegral(left, right, -1);
+            	out.println(	"Left"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
-    							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
-    							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-    							"$" + "\\\\");
-=======
+    							"$" + GetRound(Integral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
+    							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
-        		integral = CHMIntegral.CalcTrapIntegral(left, right, -1);
-            	out.println(	"Trap"+ "&" + 
+        		integral = Integral.CalcTrapIntegral(left, right, -1);
+            	out.println(	"Left"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
-    							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
-    							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-    							"$" + "\\\\");
-=======
+    							"$" + GetRound(Integral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
+    							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
-        		integral = CHMIntegral.CalcSimpIntegral(left, right, -1);
-            	out.println(	"Simp"+ "&" + 
+        		integral = Integral.CalcSimpIntegral(left, right, -1);
+            	out.println(	"Left"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
-    							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
-    							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-    							"$" + "\\\\");
-=======
+    							"$" + GetRound(Integral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
+    							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
-        		integral = CHMIntegral.CalcMonteIntegral(left, right, -1);
-            	out.println(	"Monte"+ "&" + 
+        		integral = Integral.CalcMonteIntegral(left, right, -1);
+            	out.println(	"Left"+ "&" + 
     							//deltaCurrentTime + "" + 
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
-    							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
-    							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
-    							"$" + "\\\\");
-            	out.println("\\hline");
-            	out.print("\\end{tabular}");
-            	out.println();
-            	out.println("========== Simpson Integral ==========\\\\");
-            	System.out.println("<");
-            	DeltaPrevios = 1;
-            	n = 2;
-            	for (int i = 1; i <= degree; i++)
-            	{
-            		h = (right - left) / n;
-            		n *= 2;
-            		integral = CHMIntegral.CalcSimpIntegral(left, right, i);
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
-                	out.println(
-        							DeltaCurrent + " " +
-        							ThError(left, right, i, step));
-                	System.out.print("!");
-            	}
-            	out.println();
-=======
+    							"$" + GetRound(Integral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
+    							"$" + GetRound(Integral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
             	out.println("\\hline");
-            	out.print("\\end{tabular}");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	System.out.println("Done");
             } finally {
                 //После чего мы должны закрыть файл

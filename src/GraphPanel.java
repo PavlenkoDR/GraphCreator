@@ -26,14 +26,21 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
 	public boolean editing;
 	public boolean 	boolDrawGraphApprox, 
+<<<<<<< HEAD
 			boolDrawGraphPoly,
 			boolDrawGraphFur,
 			boolDrawGraphSpline;
+=======
+					boolDrawGraphPoly,
+					boolDrawGraphFur,
+					boolDrawGraphSpline;
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	
 	Function func;
 	Paint paint;
 	
 	public void paint(Graphics g) {
+<<<<<<< HEAD
 		super.paint(g);
   		paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
   		paint.SetFunc(func);
@@ -84,12 +91,70 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
 	  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
 	}
+=======
+	  	   super.paint(g);
+		  		paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
+		  		paint.SetFunc(func);
+		  		paint.xScale1 = (paint.width/(Paint.BorderMaxX - Paint.BorderMinX) - 1) * xScaleVec;
+		  		paint.yScale1 = (paint.height/(Paint.BorderMaxY - Paint.BorderMinY) - 1) * yScaleVec;
+		  		paint.PosX = getSize().width/2 + PosXVec;
+		  		paint.PosY = getSize().height/2 + PosYVec;
+	   			
+		  		paint.DrawGrid(g);
+		  		paint.DrawCoord(g);
+	   			
+	   			g.setColor(Color.RED);
+	   			g.drawString("Input points ", 40 , 80);
+	   			if (func.GetPointsFlag) paint.DrawPoints(g);
+
+	 		  	g.setColor(Color.MAGENTA);
+	   			g.drawString("Matrix Interpolation ", 40 , 50);
+	 		  	if ((boolDrawGraphPoly)&&(func.GetPointsFlag)) paint.DrawGraphPoly(g);
+
+	 		  	g.setColor(Color.BLUE);
+	   			g.drawString("Approximation " + func.nApprox + " power", 40 , 65);
+	 		  	if ((boolDrawGraphPoly)&&(func.GetPointsFlag)) paint.DrawGraphApprox(g);
+	 		  	if ((boolDrawGraphFur)&&(CHMFure.GetPointsFlag))
+	 		  	{
+		 		  	g.setColor(Color.GREEN);
+		   			g.drawString("Func", 40 , 95);
+		 		  	paint.DrawGraph(g, CHMFure.funcX, CHMFure.funcY, CHMFure.sizeFunc);
+
+		 		  	g.setColor(Color.ORANGE);
+		   			g.drawString("Fur", 40 , 110);
+		 		  	 paint.DrawGraph(g, CHMFure.furX, CHMFure.furY, CHMFure.sizeFur);
+
+		 		  	g.setColor(Color.RED);
+		   			g.drawString("Delta", 40 , 125);
+		 		  	paint.DrawGraph(g, CHMFure.deltaX, CHMFure.deltaY, CHMFure.sizeDelta);
+	 		  	}
+	 		  	if ((boolDrawGraphSpline)&&(CHMSpline.GetPointsFlag))
+	 		  	{
+		 		  	g.setColor(Color.GREEN);
+		   			g.drawString("Func", 40 , 95);
+		 		  	paint.DrawGraph(g, CHMSpline.funcX, CHMSpline.funcY, CHMSpline.sizeFunc);
+
+		 		  	g.setColor(Color.ORANGE);
+		   			g.drawString("Spline", 40 , 110);
+		 		  	paint.DrawGraph(g, CHMSpline.splineX, CHMSpline.splineY, CHMSpline.sizeSpline);
+
+		 		  	g.setColor(Color.RED);
+		   			g.drawString("Delta", 40 , 125);
+		 		  	paint.DrawGraph(g, CHMSpline.deltaX, CHMSpline.deltaY, CHMSpline.sizeDelta);
+	 		  	}
+	 		  	
+	 		  	g.setColor(Color.RED);
+	 		  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
+	 		  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
+	     }
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
     
 	public GraphPanel()
 	{
 		super();
 		boolDrawGraphApprox = false;
 		boolDrawGraphPoly = false;
+<<<<<<< HEAD
     		func = new Function();
 		editing = false;
     		addMouseListener(this);
@@ -113,6 +178,31 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
     		};
     		addKeyListener(keyCase);
 	    	setVisible(true);
+=======
+    	func = new Function();
+		editing = false;
+    	addMouseListener(this);
+    	addMouseMotionListener(this);
+    	addMouseWheelListener(this);
+    	KeyAdapter keyCase = new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+                String Key = KeyEvent.getKeyText(e.getKeyCode());
+                switch(Key)
+                {
+                case "2":
+                	func.nApprox = (func.nApprox < func.size)?func.nApprox + 1:func.size;
+                	break;
+            	case "1":
+            		func.nApprox = (func.nApprox > 2)?func.nApprox - 1:2;
+            		break;
+                }
+                func.approx.InitMatrix(func.nApprox);
+            	repaint();
+            };
+    	};
+    	addKeyListener(keyCase);
+	    setVisible(true);
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 		
 	}
     
@@ -141,6 +231,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		for (int i = 0; i < func.size; i++)
 		{
 			if ((func.X[i] - 0.1 > MouseTransX - paint.ActionRadius)&&
+<<<<<<< HEAD
 	    		   (func.X[i] - 0.1 < MouseTransX + paint.ActionRadius))
 			if ((func.Y[i] > MouseTransY - paint.ActionRadius)&&
 			   (func.Y[i] < MouseTransY + paint.ActionRadius))
@@ -148,6 +239,15 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 				Paint.ActionPoint = i;
 				return;
 			}
+=======
+				(func.X[i] - 0.1 < MouseTransX + paint.ActionRadius))
+				if ((func.Y[i] > MouseTransY - paint.ActionRadius)&&
+					(func.Y[i] < MouseTransY + paint.ActionRadius))
+				{
+					Paint.ActionPoint = i;
+					return;
+				}
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 		}
 	}
 
@@ -200,6 +300,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+<<<<<<< HEAD
 		int notches = e.getWheelRotation();
 		int speed = 10;
 		if (notches < 0) {
@@ -221,3 +322,49 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	
 
 }
+=======
+		//System.out.print("!!!");
+		//double LastDisplayCenterTransX, LastDisplayCenterTransY;
+		//double DisplayCenterTransX, DisplayCenterTransY;
+	       int notches = e.getWheelRotation();
+	       int speed = 10;
+			//LastDisplayCenterTransX = (paint.width/2  - paint.PosX)/(paint.xScale1);
+			//LastDisplayCenterTransY = (paint.height/2  - paint.PosY)/(paint.yScale1);
+	       if (notches < 0) {
+	    	   xScaleVec+=speed/(Paint.BorderMaxX - Paint.BorderMinX);
+	           yScaleVec+=speed/(Paint.BorderMaxY - Paint.BorderMinY);
+	           //PosXVec += -getSize().width/(Paint.width/(Paint.BorderMaxX - Paint.BorderMinX));
+	           //PosYVec += -getSize().height/(Paint.height/(Paint.BorderMaxY - Paint.BorderMinY));
+	       } else {
+	           	xScaleVec-=speed/(Paint.BorderMaxX - Paint.BorderMinX);
+	           	yScaleVec-=speed/(Paint.BorderMaxY - Paint.BorderMinY);
+	           	//Paint.xScale1 = (paint.width/(Paint.BorderMaxX - Paint.BorderMinX) - 1) * xScaleVec;
+	  			//Paint.yScale1 = (paint.height/(Paint.BorderMaxY - Paint.BorderMinY) - 1) * yScaleVec;
+	           	xScaleVec = ((paint.width/(Paint.BorderMaxX - Paint.BorderMinX) - 1) * xScaleVec > 0)?xScaleVec:(xScaleVec + speed/(Paint.BorderMaxX - Paint.BorderMinX));
+	           	yScaleVec = ((paint.height/(Paint.BorderMaxY - Paint.BorderMinY) - 1) * yScaleVec > 0)?yScaleVec:(yScaleVec + speed/(Paint.BorderMaxY - Paint.BorderMinY));
+		           //PosXVec -= -getSize().width/(Paint.width/(Paint.BorderMaxX - Paint.BorderMinX));
+		           //PosYVec -= -getSize().height/(Paint.height/(Paint.BorderMaxY - Paint.BorderMinY));
+	       }
+			MouseX = e.getX();
+			MouseY = e.getY();
+			MouseTransX = (MouseX - paint.PosX)/(paint.xScale1 + xScaleVec);
+			MouseTransY = -(MouseY - paint.PosY)/(paint.yScale1 + yScaleVec);
+			MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
+			MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
+			//DisplayCenterTransX = (paint.width/2  - paint.PosX)/(paint.xScale1 * xScaleVec);
+			//DisplayCenterTransY = (paint.height/2  - paint.PosY)/(paint.yScale1 * yScaleVec);
+			if (notches < 0) {
+				//PosXVec = (DisplayCenterTransX - LastDisplayCenterTransX)*(Paint.xScale1 + xScaleVec);
+				//PosYVec += -(LastDisplayCenterTransY - DisplayCenterTransY)*(paint.yScale1 * yScaleVec);
+			}
+			else
+			{
+				//PosXVec = (DisplayCenterTransX - LastDisplayCenterTransX)*(Paint.xScale1 + xScaleVec);
+				//PosYVec += (LastDisplayCenterTransY - DisplayCenterTransY)*(paint.yScale1 * yScaleVec);
+			}
+			repaint();
+	    }
+	
+
+}
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c

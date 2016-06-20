@@ -144,4 +144,8 @@ public class CHMFure {
 		GetPointsFlag = true;
 	}
 	
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
