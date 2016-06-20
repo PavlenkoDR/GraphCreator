@@ -7,13 +7,6 @@ import java.math.RoundingMode;
 
 public class CHMIntegral {
 
-<<<<<<< HEAD
-=======
-	static double ReturnDefferential(double x)
-	{
-		return x - 2*Math.sin(2*x);
-	}
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	
 	static double CalcMidIntegral(double a, double b, int degre)
 	{
@@ -99,20 +92,13 @@ public class CHMIntegral {
 			System.out.println("Error: n % 2 != 0");
 			return 0;
 		}
-<<<<<<< HEAD
 	  double result = 0, h;
 	  h = (b - a) / (n); //Шаг сетки
 	  /*
-=======
-	  int i;
-	  double result = 0, h;
-	  h = (b - a) / (n); //Шаг сетки
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	  for(i = 1; i < n / 2; i++)
 	  {
 	    result += CHMFunction.ReturnY(a + h*i*2) + 4*CHMFunction.ReturnY(a + h*(i*2 + 1)) + CHMFunction.ReturnY(a + h*(i*2 + 2));
 	  }
-<<<<<<< HEAD
 	  */
 	  result = CHMFunction.ReturnY(a) + CHMFunction.ReturnY(b);
 	  double sum1 = 0, sum2 = 0;
@@ -123,8 +109,6 @@ public class CHMIntegral {
 		  sum2 += CHMFunction.ReturnY(a + h*(i*2-1));
 	  sum2*=4;
 	  result += sum1 + sum2;
-=======
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	  result *= h/3;
 	  return result;
 	}
@@ -174,7 +158,6 @@ public class CHMIntegral {
 	{
 		return DeltaPrevios/DeltaCurrent;
 	}
-<<<<<<< HEAD
 
 	static double ReturnDefferential(double x, int n)
 	{
@@ -198,19 +181,6 @@ public class CHMIntegral {
 			max = (def > max) ? def : max;
 		}
 		return Math.pow((b-a), n)*max/Bicycles.Factorial(n);
-=======
-	
-	static double ThError(double a, double b, double h, int step)
-	{
-		double max = ReturnDefferential(a);
-		double def;
-		for (double i = a; i <= b; i += 1/((double)step))
-		{
-			def = ReturnDefferential(i);
-			max = (def > max) ? def : max;
-		}
-		return max*h*(b-a)/((double)2);
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	}
     
     public static double GetRound(double x, int n)
@@ -235,15 +205,9 @@ public class CHMIntegral {
                 //Записываем текст у файл
             	//long currentTime = 0, deltaCurrentTime = 0;
             	double integral = 0;
-<<<<<<< HEAD
             	double left = 0.6, right = 1.1;
             	double DeltaPrevios = 1, DeltaCurrent;
             	int degree = 15;
-=======
-            	double left = 0.4, right = 0.9;
-            	double DeltaPrevios = 1, DeltaCurrent;
-            	int degree = 16;
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("Expreriment number | Power | " + /*"Time of work | " + */ "Value of Integral | Absolute | Otnosit | R(x) | Speed of Convergence");
             	out.println();
             	out.println("========== Left Integral ==========\\\\");
@@ -266,11 +230,7 @@ public class CHMIntegral {
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
         							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
-        							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
@@ -296,11 +256,7 @@ public class CHMIntegral {
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
         							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
-        							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
@@ -326,11 +282,7 @@ public class CHMIntegral {
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
         							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
-        							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
@@ -356,11 +308,7 @@ public class CHMIntegral {
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
         							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
-        							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
@@ -376,29 +324,17 @@ public class CHMIntegral {
             	for (int i = 1; i <= degree; i++)
             	{
             		//currentTime = System.currentTimeMillis();
-<<<<<<< HEAD
             		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
             		h = (right - left) / n;
             		n *= 2;
             		integral = CHMIntegral.CalcSimpIntegral(left, right, i);
             		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
-=======
-            		integral = CHMIntegral.CalcSimpIntegral(left, right, i);
-            		//deltaCurrentTime = System.currentTimeMillis() - currentTime;
-            		DeltaCurrent = CHMIntegral.DeltaAbsolute(th, integral);
-            		h = (right - left) / n;
-            		n *= 2;
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
                 	out.println(	i+ "&" + "$2^{"+i+"}$" + "&" + 
         							//deltaCurrentTime + "" + 
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
         							"$" + GetRound(ThError(left, right, i, step), SignAfterCommon) + "$" + "&" +
-=======
-        							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
@@ -424,11 +360,7 @@ public class CHMIntegral {
         							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
         							"$" + GetRound(DeltaCurrent, SignAfterCommon) + "$" + "&" + 
         							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
         							"$" + GetRound(ThError(left, right, n, step), SignAfterCommon) + "$" + "&" +
-=======
-        							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "&" +
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
         							"$" + GetRound(SpeedConvergence(DeltaPrevios, DeltaCurrent), SignAfterCommon) + "$" + "\\\\");
                 	out.println("\\hline");
                 	DeltaPrevios = DeltaCurrent;
@@ -437,11 +369,7 @@ public class CHMIntegral {
             	out.print("\\end{tabular}");
             	out.println("\\newpage");
             	out.println("========== n = 10000 ==========\\\\");
-<<<<<<< HEAD
             	out.print("\\begin{tabular}{| c | c | c | c | c |}\n\\hline\nМетод &I &$\\bigtriangleup I_n$  & $\\delta I_n$   & $R_n$  \\\\ \\hline\n");
-=======
-            	out.print("\\begin{tabular}{| c | c | c | c | c | c |}\n\\hline\nМетод &I &$\\bigtriangleup I_n$  & $\\delta I_n$   & $R_n$  \\\\ \\hline\n");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	System.out.println("<");
             	h = (right - left)/((double)10000);
         		integral = CHMIntegral.CalcLeftIntegral(left, right, -1);
@@ -450,11 +378,7 @@ public class CHMIntegral {
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
     							"$" + "\\\\");
-=======
-    							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
         		integral = CHMIntegral.CalcMidIntegral(left, right, -1);
             	out.println(	"Midl"+ "&" + 
@@ -462,11 +386,7 @@ public class CHMIntegral {
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
     							"$" + "\\\\");
-=======
-    							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
         		integral = CHMIntegral.CalcRightIntegral(left, right, -1);
             	out.println(	"Right"+ "&" + 
@@ -474,11 +394,7 @@ public class CHMIntegral {
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
     							"$" + "\\\\");
-=======
-    							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
         		integral = CHMIntegral.CalcTrapIntegral(left, right, -1);
             	out.println(	"Trap"+ "&" + 
@@ -486,11 +402,7 @@ public class CHMIntegral {
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
     							"$" + "\\\\");
-=======
-    							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
         		integral = CHMIntegral.CalcSimpIntegral(left, right, -1);
             	out.println(	"Simp"+ "&" + 
@@ -498,11 +410,7 @@ public class CHMIntegral {
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
     							"$" + "\\\\");
-=======
-    							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	out.println("\\hline");
         		integral = CHMIntegral.CalcMonteIntegral(left, right, -1);
             	out.println(	"Monte"+ "&" + 
@@ -510,7 +418,6 @@ public class CHMIntegral {
     							"$" + GetRound(integral, SignAfterCommon) + "$" + "&" +
     							"$" + GetRound(CHMIntegral.DeltaAbsolute(th, integral), SignAfterCommon) + "$" + "&" + 
     							"$" + GetRound(CHMIntegral.DeltaOtnosit(th, integral), SignAfterCommon) + "$" + "&" + 
-<<<<<<< HEAD
     							"$" + "\\\\");
             	out.println("\\hline");
             	out.print("\\end{tabular}");
@@ -531,11 +438,6 @@ public class CHMIntegral {
                 	System.out.print("!");
             	}
             	out.println();
-=======
-    							"$" + GetRound(ThError(left, right, h, step), SignAfterCommon) + "$" + "\\\\");
-            	out.println("\\hline");
-            	out.print("\\end{tabular}");
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
             	System.out.println("Done");
             } finally {
                 //После чего мы должны закрыть файл

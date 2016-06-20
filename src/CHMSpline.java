@@ -1,21 +1,14 @@
-<<<<<<< HEAD
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-=======
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 
 public class CHMSpline
 {
 	
-<<<<<<< HEAD
 	static double a = 0.1, b = 0.6;
-=======
-	static double a = 1, b = 2;
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	
 	static double[] funcX, funcY,
 					splineX, splineY,
@@ -25,18 +18,9 @@ public class CHMSpline
 					sizeSpline,
 					sizeDelta;
 	
-<<<<<<< HEAD
 	static double[] X, Y;
 	
 	static boolean GetPointsFlag = false;
-=======
-	static boolean GetPointsFlag = false;
-
-	static double Func(double x)
-	{
-		return Math.pow(x, 3) - Math.cos(2*x);
-	}
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	
 	// Структура, описывающая сплайн на каждом сегменте сетки
 	private static spline_tuple splines[] = null; // Сплайн
@@ -49,12 +33,8 @@ public class CHMSpline
 	public static void build_spline(double x[], double y[], int _n)
 	{
 		n = _n;
-<<<<<<< HEAD
 		X = x;
 		Y = y;
-=======
-
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 		// Инициализация массива сплайнов
 		splines = new spline_tuple[n];
 		for (int i = 0; i < n; ++i)
@@ -100,11 +80,7 @@ public class CHMSpline
 	}
 
 	// Вычисление значения интерполированной функции в произвольной точке
-<<<<<<< HEAD
 	public static double getValue(double x)
-=======
-	public static double GetY(double x)
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	{
 		if (splines == null)
 			return 0; // Если сплайны ещё не построены - возвращаем NaN
@@ -131,7 +107,6 @@ public class CHMSpline
 		double dx = (x - s.x);
 		return s.a + (s.b + (s.c / 2. + s.d * dx / 6.) * dx) * dx; // Вычисляем значение сплайна в заданной точке.
 	}
-<<<<<<< HEAD
     
     public static double Factorial(int num) {
     	double fact=1;
@@ -259,9 +234,6 @@ public class CHMSpline
         }
     }
 
-=======
-	
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 	static void CreateDots()
 	{
 		int n;
@@ -275,11 +247,7 @@ public class CHMSpline
 		for (int i = 0; i <= n; i++)
 		{
 			funcX[i] = a + h*i;
-<<<<<<< HEAD
 			funcY[i] = -CHMFunction.ReturnY(funcX[i]);
-=======
-			funcY[i] = -Func(funcX[i]);
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 		}
 		
 		build_spline(funcX, funcY, sizeFunc);
@@ -289,11 +257,7 @@ public class CHMSpline
 		for (int i = 0; i <= n; i++)
 		{
 			splineX[i] = a + h*i;
-<<<<<<< HEAD
 			splineY[i] = getValue(splineX[i]);
-=======
-			splineY[i] = GetY(splineX[i]);
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
 		}
 
 		sizeDelta = n;

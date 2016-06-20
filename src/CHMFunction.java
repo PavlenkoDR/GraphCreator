@@ -11,11 +11,7 @@ public class CHMFunction {
 	
     public static double ReturnY(double x)
     {
-<<<<<<< HEAD
     	return Math.pow(x, 3) - Math.cos(2*x);
-=======
-    	return x*x + Math.log(x);
->>>>>>> dbe462ef1d9d99496edea6e1da8ec043fb27e86c
     }
     
 	private static double _GetDifferentialInPoint(double x, int n)
