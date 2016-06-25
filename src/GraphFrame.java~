@@ -140,7 +140,7 @@ public class GraphFrame extends JFrame{
    	       		}
       		});          
     		setVisible(true);
-    	}
+    }
 	public void DrawPolynom()
 	{
 		Graph.boolDrawGraphPoly = true;

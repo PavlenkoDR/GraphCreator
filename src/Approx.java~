@@ -54,8 +54,12 @@ public class Approx extends BasePoly{
 	{
 		InitSumm();
 		for (int i = 0; i < n; i++)
+		{
 			for (int j = 0; j < n; j++)
+			{
 				A[i][j] = SumArr[i+j];
+			}
+		}
 		LU = new Solver(n, A);
 		a = LU.getSolv(B);
 	}

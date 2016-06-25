@@ -208,7 +208,7 @@ public class CHMSpline
             				Y[j] = CHMFunction.ReturnY(X[j]);
             			}
             			CHMSpline.build_spline(X, Y, i);
-                    		out.println(Bicycles.GetRound(DeltaFAbsolute(step), SignAfterCommon)+ " " + Th(step));
+                    		out.println(	Bicycles.GetRound(DeltaFAbsolute(step), SignAfterCommon)+ " " + Th(step));
             			
             		}
             	}

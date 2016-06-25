@@ -30,5 +30,8 @@ public class Main {
     	frame = new GraphFrame("Окошко", 600, 600);
     	frame.DrawPolynom();
     	frame.DrawApprox();
+    	//frame.DrawFur();
+    	//frame.DrawSpline();
+    	//CHMIntegral.GetTable(-0.0066415);
     }
 }

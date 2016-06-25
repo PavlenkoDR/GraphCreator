@@ -173,7 +173,7 @@ public class Paint {
 	}
 	void DrawCoord(Graphics g)
 	{
-    		g.setColor(new Color(0, 0, 0));
+    	g.setColor(new Color(0, 0, 0));
 
   	  	g.drawLine(
   	  			(int)Math.round(PosX), 

@@ -84,6 +84,7 @@ public class CHMDividedDifferences {
 		{
 			mult *= (t + i - 1)/i;
 			sum += mult*tableOfFiniteDifferences[0][i];
+			//System.out.println(mult + "|" + sum);
 		}
 		return sum;
 	}

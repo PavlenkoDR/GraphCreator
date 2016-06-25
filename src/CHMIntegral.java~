@@ -124,6 +124,7 @@ public class CHMIntegral {
 	  double u[] = GetRandomMass(a, b, n);
 	  for(i = 0; i < n; i++)
 	    result += CHMFunction.ReturnY(u[i]); //Вычисляем в левой точке и добавляем в сумму
+	  }
 	  result *= h;
 	  return result;
 	}
