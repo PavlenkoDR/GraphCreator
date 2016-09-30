@@ -17,18 +17,17 @@ import javax.swing.JPanel;
 public class GraphPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	private static final long serialVersionUID = 1L;
-	public double MouseX, MouseY;
-	public double MouseLastX = 0, MouseLastY = 0;
-	public double MouseTransX, MouseTransY;
+	private double MouseX, MouseY;
+	private double MouseLastX = 0, MouseLastY = 0;
+	private double MouseTransX, MouseTransY;
 	
-	public double PosXVec = 0, PosYVec = 0;
-	public double xScaleVec = 1, yScaleVec = 1;
+	private double PosXVec = 0, PosYVec = 0;
+	private double xScaleVec = 1, yScaleVec = 1;
 
 	public boolean editing;
 	public boolean 	boolDrawGraphApprox, 
-			boolDrawGraphPoly,
-			boolDrawGraphFur,
-			boolDrawGraphSpline;
+					boolDrawGraphPoly,
+					boolDrawGraphSpline;
 	
 	Function func;
 	Paint paint;
@@ -44,42 +43,31 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 			
   		paint.DrawGrid(g);
   		paint.DrawCoord(g);
-	   			
-		g.setColor(Color.RED);
-		g.drawString("Input points ", 40 , 80);
-		if (func.GetPointsFlag) paint.DrawPoints(g);
+  		if (func.GetPointsFlag)
+  		{
+  			g.setColor(Color.RED);
+  			g.drawString("Input points ", 40 , 95);
+  			paint.DrawPoints(g);
+		}
 
-	  	g.setColor(Color.MAGENTA);
-		g.drawString("Matrix Interpolation ", 40 , 50);
-	  	if ((boolDrawGraphPoly)&&(func.GetPointsFlag)) paint.DrawGraphPoly(g);
-	  	g.setColor(Color.BLUE);
-		g.drawString("Approximation " + func.nApprox + " power", 40 , 65);
-	  	if ((boolDrawGraphPoly)&&(func.GetPointsFlag)) paint.DrawGraphApprox(g);
-	  	if ((boolDrawGraphFur)&&(CHMFure.GetPointsFlag))
-	  	{
-		  	g.setColor(Color.GREEN);
-			g.drawString("Func", 40 , 95);
-		  	paint.DrawGraph(g, CHMFure.funcX, CHMFure.funcY, CHMFure.sizeFunc);
-		  	g.setColor(Color.ORANGE);
-			g.drawString("Fur", 40 , 110);
-			paint.DrawGraph(g, CHMFure.furX, CHMFure.furY, CHMFure.sizeFur);
- 		  	g.setColor(Color.RED);
-			g.drawString("Delta", 40 , 125);
- 		  	paint.DrawGraph(g, CHMFure.deltaX, CHMFure.deltaY, CHMFure.sizeDelta);
-	  	}
-	  	if ((boolDrawGraphSpline)&&(CHMSpline.GetPointsFlag))
-	  	{
-		  	g.setColor(Color.GREEN);
-   			g.drawString("Func", 40 , 95);
- 		  	paint.DrawGraph(g, CHMSpline.funcX, CHMSpline.funcY, CHMSpline.sizeFunc);
- 		  	g.setColor(Color.ORANGE);
-  			g.drawString("Spline", 40 , 110);
- 		  	paint.DrawGraph(g, CHMSpline.splineX, CHMSpline.splineY, CHMSpline.sizeSpline);
- 		  	g.setColor(Color.RED);
-   			g.drawString("Delta", 40 , 125);
- 		  	paint.DrawGraph(g, CHMSpline.deltaX, CHMSpline.deltaY, CHMSpline.sizeDelta);
-	  	}
-		  	
+  		if (boolDrawGraphPoly)
+  		{
+  	  	  	g.setColor(Color.MAGENTA);
+  	  		g.drawString("Matrix Interpolation ", 40 , 50);
+  	  		if (func.GetPointsFlag)paint.DrawGraphPoly(g);
+  		}
+  		if (boolDrawGraphApprox)
+  		{
+  	  	  	g.setColor(Color.BLUE);
+  	  		g.drawString("Approximation " + func.nApprox + " power", 40 , 65);
+  	  		if (func.GetPointsFlag) paint.DrawGraphApprox(g);
+  		}
+  		if (boolDrawGraphSpline)
+  		{
+  	  	  	g.setColor(Color.BLACK);
+  	  		g.drawString("Spline Interpolation ", 40 , 80);
+  	  	  	if (func.GetPointsFlag)paint.DrawGraphSpline(g);
+  		}
 	  	g.setColor(Color.RED);
 	  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
 	  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
@@ -88,9 +76,10 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	public GraphPanel()
 	{
 		super();
+    	func = new Function();
 		boolDrawGraphApprox = false;
 		boolDrawGraphPoly = false;
-    		func = new Function();
+		boolDrawGraphSpline = false;
 		editing = false;
     		addMouseListener(this);
     		addMouseMotionListener(this);
@@ -137,7 +126,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		Paint.ActionPoint = -1;
 		MouseLastX = PosXVec;
 		MouseLastY = PosYVec;
-		if ((boolDrawGraphPoly)&&(func.GetPointsFlag)&&(editing))
+		if ((func.GetPointsFlag)&&(editing))
 		for (int i = 0; i < func.size; i++)
 		{
 			if ((func.X[i] - 0.1 > MouseTransX - paint.ActionRadius)&&
@@ -164,7 +153,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 			PosYVec = e.getY() - MouseY + MouseLastY;
 			repaint();
 		}
-		else if ((boolDrawGraphPoly)&&(func.GetPointsFlag))
+		else if (func.GetPointsFlag)
 		{
 			MouseX = e.getX();
 			MouseY = e.getY();
@@ -177,8 +166,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 			if (func.GetPointsFlag == true)  
 				func.Y[Paint.ActionPoint] = MouseTransY;
 			func.Y[Paint.ActionPoint] = MouseTransY;
-			func.interp.InitMatrix();
-			func.approx.InitMatrix(func.nApprox);
+			if (boolDrawGraphPoly) func.interp.InitMatrix();
+			if (boolDrawGraphApprox) func.approx.InitMatrix(func.nApprox);
+			if (boolDrawGraphSpline) func.spline.build_spline();
 			paint.func = func;
 			repaint();
 		}

@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 
 public class Main {
-	GraphFrame frame;
+	
     public static void main(String[] args){
     	new Main();
     	System.out.println("Done!");
@@ -27,8 +27,6 @@ public class Main {
     }
     Main()
     {
-    	frame = new GraphFrame("Окошко", 600, 600);
-    	frame.DrawPolynom();
-    	frame.DrawApprox();
+    	GraphFrame frame = new GraphFrame("Frame", 800, 600);
     }
 }

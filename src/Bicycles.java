@@ -9,11 +9,4 @@ public class Bicycles {
     		return x;
     	return new BigDecimal(x).setScale(n, RoundingMode.FLOOR).doubleValue();
     }
-    public static double Factorial(int num) {
-    	double fact=1;
-    	for (int i = 1; i <= num; i++)
-    		fact*=i;
-    	return fact;
-    }
-
 }

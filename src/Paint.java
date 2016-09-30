@@ -7,14 +7,14 @@ public class Paint {
 	static double BorderMaxX = 20;
 	static double BorderMinY = -20;
 	static double BorderMaxY = 20;
-    	static double ceil = 20;
+    static double ceil = 20;
 	
-	double tmp1;
-	double tmp2;
-	double xGraphPoly[];
-	double yGraphPoly[];
-	double xGraphApprox[];
-	double yGraphApprox[];
+	private double xGraphPoly[];
+	private double yGraphPoly[];
+	private double xGraphApprox[];
+	private double yGraphApprox[];
+	private double xGraphSpline[];
+	private double yGraphSpline[];
 	double xScale1 = 16;
 	double yScale1 = 16;
 	double PosX = 0;
@@ -38,6 +38,8 @@ public class Paint {
 		yGraphPoly = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
 		xGraphApprox = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
 		yGraphApprox = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
+		xGraphSpline = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
+		yGraphSpline = new double[(int)Math.round((BorderMaxX - BorderMinX)*ceil) + 1];
 	}
 	void SetFunc(Function _func)
 	{
@@ -47,8 +49,10 @@ public class Paint {
         		{
         			xGraphPoly[(int)Math.round((i - BorderMinX)*ceil)] = i;
         			yGraphPoly[(int)Math.round((i - BorderMinX)*ceil)] = -(func.interp.getValue(i));
-	  			xGraphApprox[(int)Math.round((i - BorderMinX)*ceil)] = i;
-	  			yGraphApprox[(int)Math.round((i - BorderMinX)*ceil)] = -(func.approx.getValue(i, func.nApprox));
+        			xGraphApprox[(int)Math.round((i - BorderMinX)*ceil)] = i;
+        			yGraphApprox[(int)Math.round((i - BorderMinX)*ceil)] = -(func.approx.getValue(i, func.nApprox));
+        			xGraphSpline[(int)Math.round((i - BorderMinX)*ceil)] = i;
+        			yGraphSpline[(int)Math.round((i - BorderMinX)*ceil)] = -(func.spline.getValue(i));
         		}
 	}
 
@@ -60,6 +64,11 @@ public class Paint {
 	void DrawGraphApprox(Graphics g)
 	{
 		_DrawGraph(g, xGraphApprox, yGraphApprox);
+	}
+	
+	void DrawGraphSpline(Graphics g)
+	{
+		_DrawGraph(g, xGraphSpline, yGraphSpline);
 	}
 
 
@@ -135,40 +144,6 @@ public class Paint {
 		      			(int)Math.round(BorderMaxX*xScale1 + PosX), 
 		      			(int)Math.round(j + PosY)
 		      			  );
-			}
-	}
-	void DrawGridHard(Graphics g)
-	{
-    		g.setColor(new Color(220, 220, 220));
-    		double stepXLeft = BorderMinX;
-    		double stepXRight = BorderMaxX;
-    		double stepYLeft = BorderMinX;
-    		double stepYRight = BorderMaxX;
-	
-    		while(stepXLeft*xScale1 + PosX > 0)
-    			stepXLeft--;
-    		while(stepXRight*xScale1 + PosX < width)
-    			stepXRight++;
-    		while(stepYLeft*yScale1 + PosY > 0)
-    			stepYLeft--;
-    		while(stepYRight*yScale1 + PosY < height)
-    			stepYRight++;
-    		
-		for (double i = stepXLeft*xScale1; i <= stepXRight*xScale1; i+= xScale1)
-			for (double j = stepYLeft*yScale1; j <= stepYRight*yScale1; j+= yScale1)
-			{
-		      	  	g.drawLine(
-	   				(int)Math.round(i + PosX), 
-	      	  			(int)Math.round(0), 
-	      	  			(int)Math.round(i + PosX), 
-	      	  			(int)Math.round(height)
-	      			);
-	      	  		g.drawLine(
-		      			(int)Math.round(0), 
-		      			(int)Math.round(j + PosY), 
-		      			(int)Math.round(width), 
-		      			(int)Math.round(j + PosY)
-		      		);
 			}
 	}
 	void DrawCoord(Graphics g)
