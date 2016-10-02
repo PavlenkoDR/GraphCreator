@@ -8,3 +8,5 @@ public void SetDotsFromFile(File file)
 public void SetDrawPolynom(boolean f)
 public void SetDrawApprox(boolean f)
 public void SetDrawSpline(boolean f)
+
+public void SetDrawExtraPoly(boolean f)

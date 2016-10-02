@@ -31,6 +31,7 @@ public class GraphFrame extends JFrame{
 	private JCheckBox CheckBoxPoly;
 	private JCheckBox CheckBoxApprox;
 	private JCheckBox CheckBoxSpline;
+	private JCheckBox CheckBoxExtraPoly;
 	private SpinnerModel model;
 	private JSpinner spinner;
 	public void SetFunc(Function func)
@@ -55,6 +56,12 @@ public class GraphFrame extends JFrame{
 	{
  	   Graph.boolDrawGraphPoly = f;
  	   CheckBoxPoly.setSelected(f);
+	}
+	public void SetDrawExtraPoly(boolean f)
+	{
+ 	   Graph.boolDrawGraphExtraPoly = f;
+ 	   CheckBoxExtraPoly.setSelected(f);
+ 	   Graph.repaint();
 	}
 	public void SetDrawApprox(boolean f)
 	{
@@ -139,6 +146,8 @@ public class GraphFrame extends JFrame{
         	spinner.addChangeListener(listener);
     		Panel1.setLayout(new BoxLayout(Panel1, BoxLayout.Y_AXIS));
     		Panel1.add(ButtonOpen);
+    		CheckBoxExtraPoly = new JCheckBox("Экстраполяция");
+    		Panel1.add(CheckBoxExtraPoly);
     		CheckBoxPoly = new JCheckBox("Полином");
     		Panel1.add(CheckBoxPoly);
     		CheckBoxApprox = new JCheckBox("Аппроксимация");
@@ -185,21 +194,38 @@ public class GraphFrame extends JFrame{
     	       		}
        		});
     		CheckBoxPoly.addActionListener(new ActionListener() {
- 		       public void actionPerformed(ActionEvent e){
- 		    	   if (CheckBoxPoly.isSelected())
- 		    	   {
- 		    		   Graph.boolDrawGraphPoly = true;
- 		    	   }
- 		    	   else
- 		    	   {
- 		    		   Graph.boolDrawGraphPoly = false;
- 		    	   }
- 		    	   if (Graph.func.GetPointsFlag) Graph.func.interp.InitMatrix();
- 		    	   Graph.repaint();
- 	       		}
-    		});
-    		CheckBoxSpline.setSelected(true);
-    		Graph.boolDrawGraphSpline = true;
+  		       public void actionPerformed(ActionEvent e){
+  		    	   if (CheckBoxPoly.isSelected())
+  		    	   {
+  		    		   Graph.boolDrawGraphPoly = true;
+  		    	   }
+  		    	   else
+  		    	   {
+  		    		   Graph.boolDrawGraphPoly = false;
+  		    	   }
+  		    	   if (Graph.func.GetPointsFlag) Graph.func.interp.InitMatrix();
+  		    	   Graph.repaint();
+  	       		}
+     		});
+    		CheckBoxExtraPoly.addActionListener(new ActionListener() {
+  		       public void actionPerformed(ActionEvent e){
+  		    	   if (CheckBoxExtraPoly.isSelected())
+  		    	   {
+  		    		   Graph.boolDrawGraphExtraPoly = true;
+  		    	   }
+  		    	   else
+  		    	   {
+  		    		   Graph.boolDrawGraphExtraPoly = false;
+  		    	   }
+  		    	   if (Graph.func.GetPointsFlag) 
+  		    	   {
+  		    		   if (Graph.boolDrawGraphPoly) Graph.func.interp.InitMatrix();
+  		    		   if (Graph.boolDrawGraphApprox) Graph.func.approx.InitMatrix(Graph.func.nApprox);
+  		    		   if (Graph.boolDrawGraphSpline) Graph.func.spline.build_spline();
+  		    	   }
+  		    	   Graph.repaint();
+  	       		}
+     		});
     		CheckBoxSpline.addActionListener(new ActionListener() {
  		       public void actionPerformed(ActionEvent e){
  		    	   if (CheckBoxSpline.isSelected())
