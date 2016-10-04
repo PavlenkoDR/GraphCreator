@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.io.File;
 
 import javax.swing.BoxLayout;
@@ -101,18 +103,31 @@ public class GraphFrame extends JFrame{
 					new Insets(1, 1, 1, 1), 
 					getSize().width, 
 					getSize().height));    
+				Graph.repaint();
 			}
 			@Override
 			public void componentHidden(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
 			}
 			@Override
 			public void componentMoved(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
 			}
 			@Override
 			public void componentShown(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
+			}
+    	});
+    	addWindowStateListener(new WindowStateListener() {
+			@Override
+			public void windowStateChanged(WindowEvent e) {
+				add(Graph, new 	GridBagConstraints(
+						0, 0, 1, 1, 1, 1, 
+						GridBagConstraints.NORTH, 
+						GridBagConstraints.CENTER, 
+						new Insets(1, 1, 1, 1), 
+						getSize().width, 
+						getSize().height));    
+				Graph.repaint();
+				Graph.paint.width = Graph.getSize().width;
+				Graph.paint.height = Graph.getSize().height;
 			}
     	});
     	setLocationRelativeTo(null); //open on center

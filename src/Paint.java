@@ -161,10 +161,14 @@ public class Paint {
 	{
     	g.setColor(new Color(220, 220, 220));
     	grid_power = 0.03125;
-    	while (Scale*grid_power < 20) grid_power *= 2;
-    	int scale_int =(((int)Scale*grid_power == 0)?1:((int)(Scale*grid_power)));
+    	while (Scale*grid_power < (width+height)/80) grid_power *= 2;
+    	int scale_int =(((int)(Scale*grid_power) == 0)?1:((int)(Scale*grid_power)));
     	double fromX = ((-(int)PosX)/(scale_int))*Scale*grid_power, toX = ((width - (int)PosX)/(scale_int))*Scale*grid_power;
     	double fromY = ((-(int)PosY)/(scale_int))*Scale*grid_power, toY = ((height -(int)PosY)/(scale_int))*Scale*grid_power;
+    	//long start_time = System.currentTimeMillis();
+    	//long end_time = System.currentTimeMillis();
+    	//long difference = end_time-start_time;
+    	//System.out.println(difference);
 		for (double i = fromX; i <= toX; i+= Scale*grid_power)
 			for (double j = fromY; j <= toY; j+= Scale*grid_power)
 			{

@@ -42,12 +42,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
   		paint.Scale = (Math.min(paint.width, paint.height)/(Paint.BorderMax - Paint.BorderMin) - 1) * ScaleVec;
   		paint.PosX = getSize().width/2 + PosXVec;
   		paint.PosY = getSize().height/2 + PosYVec;
-
-    	long start_time = System.currentTimeMillis();
   		paint.DrawGrid(g);
-    	long end_time = System.currentTimeMillis();
-    	long difference = end_time-start_time;
-    	System.out.println(difference);
   		paint.DrawCoord(g);
   		paint.SetDrawGraphExtraPoly(boolDrawGraphExtraPoly);
   		if (func.GetPointsFlag)
