@@ -18,7 +18,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
 	private static final long serialVersionUID = 1L;
 	private double MouseX, MouseY;
-	private double MouseLastX = 0, MouseLastY = 0;
+	private double MouseXNow, MouseYNow;
+	private double MouseXLast, MouseYLast;
+	private double LastVecX = 0, LastVecY = 0;
 	private double MouseTransX, MouseTransY;
 	
 	private double PosXVec = 0, PosYVec = 0;
@@ -29,10 +31,12 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 					boolDrawGraphPoly,
 					boolDrawGraphSpline,
 					boolDrawGraphExtraPoly;
+	int activeButton;
 	
 	Function func;
 	Paint paint;
-	
+	int ActionPoint = -1;
+	boolean allocation;
 	public void paint(Graphics g) {
 		super.paint(g);
 		//if ((paint.width != getSize().width)||(paint.height != getSize().height))
@@ -71,6 +75,11 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
   	  	  	if (func.GetPointsFlag)paint.DrawGraphSpline(g);
   		}
 	  	g.setColor(Color.RED);
+		if (allocation) g.drawRect(
+				(int)((MouseXLast < MouseXNow)?MouseXLast:MouseXNow), 
+				(int)((MouseYLast < MouseYNow)?MouseYLast:MouseYNow), 
+				Math.abs((int)MouseXNow - (int)MouseXLast), 
+				Math.abs((int)MouseYNow - (int)MouseYLast));
 	  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
 	  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
 	  	g.drawString("1:"+paint.grid_power, getSize().width - 70 , paint.height - 30);
@@ -110,8 +119,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
     
 	@Override
 	public void mouseClicked(MouseEvent e) {	//Щелчок
-		MouseLastX = PosXVec;
-		MouseLastY = PosXVec;
+		LastVecX = PosXVec;
+		LastVecY = PosXVec;
+		activeButton = e.getButton();
 	}
 
 	@Override
@@ -126,54 +136,83 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
 	@Override
 	public void mousePressed(MouseEvent e) {	//Нажатие
-		Paint.ActionPoint = -1;
-		MouseLastX = PosXVec;
-		MouseLastY = PosYVec;
+		LastVecX = PosXVec;
+		LastVecY = PosYVec;
+		MouseXNow = e.getX();
+		MouseYNow = e.getY();
+		MouseXLast = e.getX();
+		MouseYLast = e.getY();
+		ActionPoint = -1;
+		allocation = false;
+		activeButton = e.getButton();
 		if ((func.GetPointsFlag)&&(editing))
-		for (int i = 0; i < func.size; i++)
 		{
-			if ((func.X[i] - 0.1 > MouseTransX - paint.ActionRadius)&&
-	    		   (func.X[i] - 0.1 < MouseTransX + paint.ActionRadius))
-			if ((func.Y[i] > MouseTransY - paint.ActionRadius)&&
-			   (func.Y[i] < MouseTransY + paint.ActionRadius))
+			Paint.setActionRadius((Paint.getPointsRadius() + 1)/paint.Scale);
+			for (int i = 0; i < func.size; i++)
 			{
-				Paint.ActionPoint = i;
-				return;
+				if ((func.X[i] + 0.1 > MouseTransX - Paint.getActionRadius())&&
+		    		   (func.X[i] + 0.1 < MouseTransX + Paint.getActionRadius()))
+				if ((func.Y[i] > MouseTransY - Paint.getActionRadius())&&
+				   (func.Y[i] < MouseTransY + Paint.getActionRadius()))
+				{
+					ActionPoint = i;
+					return;
+				}
 			}
+			
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {	//Отжатие
-		
+		allocation = false;
+		activeButton = -1;
+		repaint();
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {	//Перетаскивание
-		if (Paint.ActionPoint == -1)
-		{
-			PosXVec = e.getX() - MouseX + MouseLastX;
-			PosYVec = e.getY() - MouseY + MouseLastY;
-			repaint();
-		}
-		else if (func.GetPointsFlag)
-		{
-			MouseX = e.getX();
-			MouseY = e.getY();
-			MouseTransX = (MouseX - paint.PosX)/paint.Scale;
-			MouseTransY = -(MouseY - paint.PosY)/paint.Scale;
-			MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
-			MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
-			func.Y[Paint.ActionPoint] = MouseTransY;
-			//t_Poly.F[Paint.ActionPoint] = MouseTransY;
-			if (func.GetPointsFlag == true)  
-				func.Y[Paint.ActionPoint] = MouseTransY;
-			func.Y[Paint.ActionPoint] = MouseTransY;
-			if (boolDrawGraphPoly) func.interp.InitMatrix();
-			if (boolDrawGraphApprox) func.approx.InitMatrix(func.nApprox);
-			if (boolDrawGraphSpline) func.spline.build_spline();
-			//paint.func = func;
-			repaint();
+		switch (activeButton) {
+		case 1:
+			if ((func.GetPointsFlag)&&(ActionPoint != -1))
+			{
+				// Drag
+				MouseX = e.getX();
+				MouseY = e.getY();
+				MouseTransX = (MouseX - paint.PosX)/paint.Scale;
+				MouseTransY = -(MouseY - paint.PosY)/paint.Scale;
+				MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
+				MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
+				func.Y[ActionPoint] = MouseTransY;
+				//t_Poly.F[ActionPoint] = MouseTransY;
+				if (func.GetPointsFlag == true)  
+					func.Y[ActionPoint] = MouseTransY;
+				func.Y[ActionPoint] = MouseTransY;
+				if (boolDrawGraphPoly) func.interp.InitMatrix();
+				if (boolDrawGraphApprox) func.approx.InitMatrix(func.nApprox);
+				if (boolDrawGraphSpline) func.spline.build_spline();
+				//paint.func = func;
+				repaint();
+			}
+			else if (editing)
+			{
+				allocation = true;
+				MouseXNow = e.getX();
+				MouseYNow = e.getY();
+				repaint();
+			}
+			break;
+		case 3:
+			if (ActionPoint == -1)
+			{
+				// Move
+				PosXVec = e.getX() - MouseX + LastVecX;
+				PosYVec = e.getY() - MouseY + LastVecY;
+				repaint();
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -185,8 +224,8 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		MouseTransY = -(MouseY - paint.PosY)/paint.Scale;
 		MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
 		MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
-		MouseLastX = PosXVec;
-		MouseLastY = PosYVec;
+		LastVecX = PosXVec;
+		LastVecY = PosYVec;
 		repaint(65, paint.height - 60, 50, 30);
 		
 	}
@@ -197,6 +236,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		double speed = 1.1;
 		if (notches < 0) {
 			ScaleVec=(ScaleVec<100)?ScaleVec*speed:ScaleVec;
+			//ScaleVec=(paint.grid_power != 0.03125)?ScaleVec*speed:ScaleVec;
 		} else {
 			//System.out.println(ScaleVec);
 			ScaleVec=(ScaleVec>0.1)?ScaleVec/speed:ScaleVec;

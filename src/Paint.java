@@ -6,6 +6,7 @@ public class Paint {
 	static double BorderMin = -20;
 	static double BorderMax = 20;
     static double ceil = 20;
+	private static double ActionRadius = 0.5;
 	
 	private double xGraphPoly[];
 	private double yGraphPoly[];
@@ -16,14 +17,12 @@ public class Paint {
 	double Scale = 16;
 	double PosX = 0;
 	double PosY = 0;
-	double ActionRadius = 0.5;
 	double grid_power;
     
 	int width;
 	int height;
    
-	static int PointsRadius = 3;
-	static int ActionPoint = -1;
+	private static int PointsRadius = 3;
 
 	public boolean boolDrawGraphExtraPoly;
 	
@@ -150,10 +149,10 @@ public class Paint {
 	        for (int i = 0; i < func.size; i++)
         	{
       		  	g.drawOval(
-      					CoordToPixelX(func.X[i]) - PointsRadius, 
-      		  			CoordToPixelY(func.Y[i]) - PointsRadius, 
-      					PointsRadius*2, 
-      					PointsRadius*2);
+      					CoordToPixelX(func.X[i]) - getPointsRadius(), 
+      		  			CoordToPixelY(func.Y[i]) - getPointsRadius(), 
+      					getPointsRadius()*2, 
+      					getPointsRadius()*2);
         	}
 	}
 
@@ -192,22 +191,38 @@ public class Paint {
 
   	  	g.drawLine(
   	  			CoordToPixelX(0), 
-  	  			CoordToPixelY(BorderMin), 
+  	  			(CoordToPixelY(BorderMin) < height)?CoordToPixelY(BorderMin):(height), 
   	  			CoordToPixelX(0), 
-  	  			CoordToPixelY(BorderMax)
+  	  			(CoordToPixelY(BorderMax) > 0)?CoordToPixelY(BorderMax):(0)
   			  );
 		g.drawString("y", 
 				CoordToPixelX(-10/Scale), 
 				(CoordToPixelY(BorderMax - 1)>10)?((CoordToPixelY(BorderMax - 1) < height - 10)?(CoordToPixelY(BorderMax - 1)):height - 10):10);
   	  	g.drawLine(
-  	  			CoordToPixelX(BorderMin), 
+  	  			(CoordToPixelX(BorderMin) > 0)?CoordToPixelX(BorderMin):(0), 
   	  			CoordToPixelY(0), 
-      			CoordToPixelX(BorderMax), 
+  	  			(CoordToPixelX(BorderMax) < width)?CoordToPixelX(BorderMax):(width),
       			CoordToPixelY(0)
       			  );
 		g.drawString("X", 
 				(CoordToPixelX(BorderMin + 1) > 10)?((CoordToPixelX(BorderMin + 1) < width - 10)?(CoordToPixelX(BorderMin + 1) - 10):width - 10):0, 
 				CoordToPixelY(10/Scale));
+	}
+
+	public static int getPointsRadius() {
+		return PointsRadius;
+	}
+
+	public static void setPointsRadius(int pointsRadius) {
+		PointsRadius = pointsRadius;
+	}
+
+	public static double getActionRadius() {
+		return ActionRadius;
+	}
+
+	public static void setActionRadius(double actionRadius) {
+		ActionRadius = actionRadius;
 	}
 
 }
