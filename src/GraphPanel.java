@@ -22,7 +22,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	private double MouseTransX, MouseTransY;
 	
 	private double PosXVec = 0, PosYVec = 0;
-	private double xScaleVec = 1, yScaleVec = 1;
+	private double ScaleVec = 1;
 
 	public boolean editing;
 	public boolean 	boolDrawGraphApprox, 
@@ -35,10 +35,11 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	
 	public void paint(Graphics g) {
 		super.paint(g);
-  		paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
+		//if ((paint.width != getSize().width)||(paint.height != getSize().height))
+			paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
+		//System.out.println("!");
   		paint.SetFunc(func);
-  		paint.xScale1 = (paint.width/(Paint.BorderMaxX - Paint.BorderMinX) - 1) * xScaleVec;
-  		paint.yScale1 = (paint.height/(Paint.BorderMaxY - Paint.BorderMinY) - 1) * yScaleVec;
+  		paint.Scale = (Math.min(paint.width, paint.height)/(Paint.BorderMax - Paint.BorderMin) - 1) * ScaleVec;
   		paint.PosX = getSize().width/2 + PosXVec;
   		paint.PosY = getSize().height/2 + PosYVec;
 			
@@ -73,6 +74,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	  	g.setColor(Color.RED);
 	  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
 	  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
+	  	g.drawString("1:"+paint.grid_power, getSize().width - 70 , paint.height - 30);
 	}
     
 	public GraphPanel()
@@ -83,28 +85,28 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		boolDrawGraphPoly = false;
 		boolDrawGraphSpline = false;
 		editing = false;
-    		addMouseListener(this);
-    		addMouseMotionListener(this);
-    		addMouseWheelListener(this);
-    		KeyAdapter keyCase = new KeyAdapter() {
-        		public void keyReleased(KeyEvent e) {
-                		String Key = KeyEvent.getKeyText(e.getKeyCode());
-                		switch(Key)
-                		{
-                		case "2":
-                			func.nApprox = (func.nApprox < func.size)?func.nApprox + 1:func.size;
-                			break;
-            			case "1":
-            				func.nApprox = (func.nApprox > 2)?func.nApprox - 1:2;
-            				break;
-                		}
-                		func.approx.InitMatrix(func.nApprox);
-            			repaint();
-            		};
+		paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
+    	addMouseListener(this);
+    	addMouseMotionListener(this);
+    	addMouseWheelListener(this);
+    	KeyAdapter keyCase = new KeyAdapter() {
+        	public void keyReleased(KeyEvent e) {
+        		String Key = KeyEvent.getKeyText(e.getKeyCode());
+                switch(Key)
+                {
+                case "2":
+                	func.nApprox = (func.nApprox < func.size)?func.nApprox + 1:func.size;
+                	break;
+            	case "1":
+            		func.nApprox = (func.nApprox > 2)?func.nApprox - 1:2;
+            		break;
+                }
+                func.approx.InitMatrix(func.nApprox);
+            	repaint();
+            	};
     		};
-    		addKeyListener(keyCase);
-	    	setVisible(true);
-		
+    	addKeyListener(keyCase);
+	    setVisible(true);
 	}
     
 	@Override
@@ -159,8 +161,8 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		{
 			MouseX = e.getX();
 			MouseY = e.getY();
-			MouseTransX = (MouseX - paint.PosX)/paint.xScale1;
-			MouseTransY = -(MouseY - paint.PosY)/paint.yScale1;
+			MouseTransX = (MouseX - paint.PosX)/paint.Scale;
+			MouseTransY = -(MouseY - paint.PosY)/paint.Scale;
 			MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
 			MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
 			func.Y[Paint.ActionPoint] = MouseTransY;
@@ -171,7 +173,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 			if (boolDrawGraphPoly) func.interp.InitMatrix();
 			if (boolDrawGraphApprox) func.approx.InitMatrix(func.nApprox);
 			if (boolDrawGraphSpline) func.spline.build_spline();
-			paint.func = func;
+			//paint.func = func;
 			repaint();
 		}
 	}
@@ -180,8 +182,8 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	public void mouseMoved(MouseEvent e) {	//Перемещение мыши
 		MouseX = e.getX();
 		MouseY = e.getY();
-		MouseTransX = (MouseX - paint.PosX)/paint.xScale1;
-		MouseTransY = -(MouseY - paint.PosY)/paint.yScale1;
+		MouseTransX = (MouseX - paint.PosX)/paint.Scale;
+		MouseTransY = -(MouseY - paint.PosY)/paint.Scale;
 		MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
 		MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
 		MouseLastX = PosXVec;
@@ -195,16 +197,13 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		int notches = e.getWheelRotation();
 		double speed = 1.1;
 		if (notches < 0) {
-			xScaleVec*=speed;//(Paint.BorderMaxX - Paint.BorderMinX);
-			yScaleVec*=speed;//(Paint.BorderMaxY - Paint.BorderMinY);
-			PosXVec = (PosXVec/paint.xScale1)*(paint.width/(Paint.BorderMaxX - Paint.BorderMinX) - 1) * xScaleVec;
-			PosYVec = (PosYVec/paint.yScale1)*(paint.height/(Paint.BorderMaxY - Paint.BorderMinY) - 1) * yScaleVec;
+			ScaleVec=(ScaleVec<100)?ScaleVec*speed:ScaleVec;
 		} else {
-			xScaleVec=(xScaleVec>0.3)?xScaleVec/speed:xScaleVec;//(Paint.BorderMaxX - Paint.BorderMinX);
-		    yScaleVec=(xScaleVec>0.3)?xScaleVec/speed:xScaleVec;//(Paint.BorderMaxY - Paint.BorderMinY);
-			PosXVec = (PosXVec/paint.xScale1)*(paint.width/(Paint.BorderMaxX - Paint.BorderMinX) - 1) * xScaleVec;
-			PosYVec = (PosYVec/paint.yScale1)*(paint.height/(Paint.BorderMaxY - Paint.BorderMinY) - 1) * yScaleVec;
+			//System.out.println(ScaleVec);
+			ScaleVec=(ScaleVec>0.1)?ScaleVec/speed:ScaleVec;
 		}
+		PosXVec = (PosXVec/paint.Scale)*(paint.height/(Paint.BorderMax - Paint.BorderMin) - 1) * ScaleVec;
+		PosYVec = (PosYVec/paint.Scale)*(paint.height/(Paint.BorderMax - Paint.BorderMin) - 1) * ScaleVec;
 		repaint();
 	}
 	

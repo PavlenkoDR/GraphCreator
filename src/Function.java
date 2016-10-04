@@ -12,6 +12,7 @@ public class Function {
 	public Spline spline;
     int nApprox = 2;
 	public boolean GetPointsFlag = false;
+	double minY, maxY;
 
 
     public void quickSort() {
@@ -69,6 +70,14 @@ public class Function {
 				X[i] = in.nextDouble();
 			for (int i = 0; i < size; i++)
 				Y[i] = in.nextDouble();
+			minY = Y[0];
+			maxY = Y[0];
+			for (int i = 0; i < size; i++)
+			{
+				if (minY > Y[i]) minY = Y[i];
+				if (maxY < Y[i]) maxY = Y[i];
+			}
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
