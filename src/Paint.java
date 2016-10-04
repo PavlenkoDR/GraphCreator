@@ -160,27 +160,11 @@ public class Paint {
 	void DrawGrid(Graphics g)
 	{
     	g.setColor(new Color(220, 220, 220));
-    	int scale_int =(((int)Scale == 0)?1:((int)(Scale)));
-    	double fromX = ((int)(width/2)/(scale_int))*Scale, toX = ((int)(height/2)/(scale_int))*Scale;
-    	double fromY = ((int)(width/2)/(scale_int))*Scale, toY = ((int)(width/2)/(scale_int))*Scale;
     	grid_power = 0.03125;
-    	while (Scale*grid_power < 10) grid_power *= 2;
-    	while(fromX + PosX > 0)
-    	{
-    		fromX -= Scale*grid_power;
-    	}
-    	while(toX + PosX < width)
-    	{
-    		toX += Scale*grid_power;
-    	}
-    	while(fromY + PosY> 0)
-    	{
-    		fromY -= Scale*grid_power;
-    	}
-    	while(toY + PosY < width)
-    	{
-    		toY += Scale*grid_power;
-    	}
+    	while (Scale*grid_power < 20) grid_power *= 2;
+    	int scale_int =(((int)Scale*grid_power == 0)?1:((int)(Scale*grid_power)));
+    	double fromX = ((-(int)PosX)/(scale_int))*Scale*grid_power, toX = ((width - (int)PosX)/(scale_int))*Scale*grid_power;
+    	double fromY = ((-(int)PosY)/(scale_int))*Scale*grid_power, toY = ((height -(int)PosY)/(scale_int))*Scale*grid_power;
 		for (double i = fromX; i <= toX; i+= Scale*grid_power)
 			for (double j = fromY; j <= toY; j+= Scale*grid_power)
 			{
