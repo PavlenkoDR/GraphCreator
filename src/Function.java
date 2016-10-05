@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -13,7 +15,17 @@ public class Function {
     int nApprox = 2;
 	public boolean GetPointsFlag = false;
 	double minY, maxY;
+	List<String> DotsArray;
 
+	public void createDotsArray()
+	{
+		DotsArray = new ArrayList<String>();
+		for (int i = 0; i < size; i++)
+		{
+			DotsArray.add((i+1) + ": (" + X[i] + ", \t" + Y[i] + ")");
+		}
+	}
+	
 
     public void quickSort() {
         doSort(0, size-1);

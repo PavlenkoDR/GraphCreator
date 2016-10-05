@@ -3,8 +3,8 @@ import java.awt.Graphics;
 
 
 public class Paint {
-	static double BorderMin = -20;
-	static double BorderMax = 20;
+	double BorderMin = -20;
+	double BorderMax = 20;
     static double ceil = 20;
 	private static double ActionRadius = 0.5;
 	

@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -20,6 +21,8 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 
 public class GraphFrame extends JFrame{
@@ -36,6 +39,9 @@ public class GraphFrame extends JFrame{
 	private JCheckBox CheckBoxExtraPoly;
 	private SpinnerModel model;
 	private JSpinner spinner;
+	private JList<Object> DotsList;
+	JScrollPane southScroll;
+	JPanel Panel2;
 	public void SetFunc(Function func)
 	{
 		Graph.paint.SetFunc(func);
@@ -96,13 +102,21 @@ public class GraphFrame extends JFrame{
     	addComponentListener(new ComponentListener() {
 			@Override
 			public void componentResized(ComponentEvent e) {
+		  		Panel2.remove(southScroll);
+		  		Panel2.add(southScroll, new GridBagConstraints(
+		  				1, 2, 1, 1, 1, 1, 
+		  				GridBagConstraints.EAST, 
+		  				GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 1, getSize().height - 220));
+		  		remove(Graph);
 				add(Graph, new 	GridBagConstraints(
-					0, 0, 1, 1, 1, 1, 
+					0, 0, 1, 2, 1, 1, 
 					GridBagConstraints.NORTH, 
 					GridBagConstraints.CENTER, 
 					new Insets(1, 1, 1, 1), 
 					getSize().width, 
 					getSize().height));    
+				Graph.paint.width = Graph.getSize().width;
+				Graph.paint.height = Graph.getSize().height; 
 				Graph.repaint();
 			}
 			@Override
@@ -118,16 +132,22 @@ public class GraphFrame extends JFrame{
     	addWindowStateListener(new WindowStateListener() {
 			@Override
 			public void windowStateChanged(WindowEvent e) {
+		  		Panel2.remove(southScroll);
+		  		Panel2.add(southScroll, new GridBagConstraints(
+		  				1, 2, 1, 1, 1, 1, 
+		  				GridBagConstraints.EAST, 
+		  				GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 1, getSize().height - 220));
+		  		remove(Graph);
 				add(Graph, new 	GridBagConstraints(
-						0, 0, 1, 1, 1, 1, 
-						GridBagConstraints.NORTH, 
-						GridBagConstraints.CENTER, 
-						new Insets(1, 1, 1, 1), 
-						getSize().width, 
-						getSize().height));    
-				Graph.repaint();
+					0, 0, 1, 2, 1, 1, 
+					GridBagConstraints.NORTH, 
+					GridBagConstraints.CENTER, 
+					new Insets(1, 1, 1, 1), 
+					getSize().width, 
+					getSize().height));   
 				Graph.paint.width = Graph.getSize().width;
-				Graph.paint.height = Graph.getSize().height;
+				Graph.paint.height = Graph.getSize().height; 
+				Graph.repaint();
 			}
     	});
     	setLocationRelativeTo(null); //open on center
@@ -136,7 +156,7 @@ public class GraphFrame extends JFrame{
     	add(Panel1, new GridBagConstraints(
 			1, 0, 1, 1, 1, 1, 
 			GridBagConstraints.NORTH, 
-			GridBagConstraints.HORIZONTAL, new Insets(20, 1, 1, 1), 200, 0));
+			GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 200, 0));
     	ButtonOpen = new JButton("Открыть файл");
     	ButtonApprox = new JButton("Аппроксимировать");
     	final JFileChooser fileopen = new JFileChooser(); 
@@ -173,8 +193,20 @@ public class GraphFrame extends JFrame{
     	Panel1.add(CheckBox1);
     	Panel1.add(ButtonApprox);
     	Panel1.add(spinner);
-  		ButtonApprox.setVisible(false);
-  		spinner.setVisible(false);
+  		ButtonApprox.setEnabled(false);
+  		spinner.setEnabled(false);
+  		DotsList = new JList<Object>();
+  		DotsList.setLayoutOrientation(JList.VERTICAL);          
+  		southScroll = new JScrollPane(DotsList);
+        southScroll.setPreferredSize(new Dimension(100, 100));
+  		southScroll.setSize(100, 300);
+  		Panel2 = new JPanel();
+  		Panel2.setLayout(new GridBagLayout());
+  		Panel2.add(southScroll, new GridBagConstraints(
+  				1, 2, 1, 1, 1, 1, 
+  				GridBagConstraints.EAST, 
+  				GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 1, getSize().height - 220));
+  		Panel1.add(Panel2);
     	ButtonOpen.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e){
 				int ret = fileopen.showDialog(null, "Открыть файл");              
@@ -182,6 +214,13 @@ public class GraphFrame extends JFrame{
  		   			File file = fileopen.getSelectedFile();
  		   			Graph.func = new Function(file);
  		   			Graph.paint.SetFunc(Graph.func);
+ 		   			if (Graph.func.GetPointsFlag) 
+ 		   			{
+ 		   				Graph.func.createDotsArray();
+ 		   				DotsList.setListData(Graph.func.DotsArray.toArray());
+ 		   				//DotsList.setSelectedIndices(new int[]{1, 2});
+ 		   				//if (DotsList.isSelectedIndex(2)) System.out.println("!!!");
+ 		   			}
  		   			spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
             		Graph.repaint();
  		   		}
@@ -248,14 +287,14 @@ public class GraphFrame extends JFrame{
     			if (CheckBoxApprox.isSelected())
  		    	{
     				Graph.boolDrawGraphApprox = true;
- 		    		ButtonApprox.setVisible(true);
- 		    		spinner.setVisible(true);
+ 		    		ButtonApprox.setEnabled(true);
+ 		    		spinner.setEnabled(true);
  		    	}
  		    	else
  		    	{
  		    		Graph.boolDrawGraphApprox = false;
- 		    		ButtonApprox.setVisible(false);
- 		    		spinner.setVisible(false);
+ 		    		ButtonApprox.setEnabled(false);
+ 		    		spinner.setEnabled(false);
  		    	}
  		    	if (Graph.func.GetPointsFlag) Graph.func.approx.InitMatrix((int) spinner.getValue());
  		    	Graph.repaint();

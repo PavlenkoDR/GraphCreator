@@ -39,11 +39,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	boolean allocation;
 	public void paint(Graphics g) {
 		super.paint(g);
-		//if ((paint.width != getSize().width)||(paint.height != getSize().height))
-			paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
-		//System.out.println("!");
+		paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
   		paint.SetFunc(func);
-  		paint.Scale = (Math.min(paint.width, paint.height)/(Paint.BorderMax - Paint.BorderMin) - 1) * ScaleVec;
+  		paint.Scale = ((Math.min(paint.width, paint.height))/Math.abs(paint.BorderMax - paint.BorderMin)) * ScaleVec * 95/100;
   		paint.PosX = getSize().width/2 + PosXVec;
   		paint.PosY = getSize().height/2 + PosYVec;
   		paint.DrawGrid(g);
@@ -83,6 +81,17 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
 	  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
 	  	g.drawString("1:"+paint.grid_power, getSize().width - 70 , paint.height - 30);
+	  	/*
+	  	System.out.println(
+	  							"width: " + paint.width + "\t" +
+	  							"heigth: " + paint.height + "\t" +
+	  							"PosX: " + paint.PosX + "\t" +
+	  							"PosY: " + paint.PosY + "\t" +
+	  							"Scale: " + paint.Scale + "\t" +
+	  							"BorderMin: " + paint.BorderMin + "\t" +
+	  							"BorderMax: " + paint.BorderMax
+	  	);
+	  	*/
 	}
     
 	public GraphPanel()
@@ -241,8 +250,8 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 			//System.out.println(ScaleVec);
 			ScaleVec=(ScaleVec>0.1)?ScaleVec/speed:ScaleVec;
 		}
-		PosXVec = (PosXVec/paint.Scale)*(paint.height/(Paint.BorderMax - Paint.BorderMin) - 1) * ScaleVec;
-		PosYVec = (PosYVec/paint.Scale)*(paint.height/(Paint.BorderMax - Paint.BorderMin) - 1) * ScaleVec;
+		PosXVec = (PosXVec/paint.Scale)*(paint.height/(paint.BorderMax - paint.BorderMin)) * ScaleVec * 95/100;
+		PosYVec = (PosYVec/paint.Scale)*(paint.height/(paint.BorderMax - paint.BorderMin)) * ScaleVec * 95/100;
 		repaint();
 	}
 	
