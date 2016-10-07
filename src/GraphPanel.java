@@ -9,8 +9,13 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.JList;
 import javax.swing.JPanel;
+
+import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 //Window Builder
 
@@ -33,10 +38,15 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 					boolDrawGraphExtraPoly;
 	int activeButton;
 	
+	JList<Object> DotsList;
+	
 	Function func;
 	Paint paint;
-	int ActionPoint = -1;
+	List<Integer> ActionPoint;
 	boolean allocation;
+	
+	int ActiveKey;
+	
 	public void paint(Graphics g) {
 		super.paint(g);
 		paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
@@ -97,6 +107,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	public GraphPanel()
 	{
 		super();
+		ActionPoint = new ArrayList<Integer>();
     	func = new Function();
 		boolDrawGraphApprox = false;
 		boolDrawGraphPoly = false;
@@ -106,23 +117,6 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
     	addMouseListener(this);
     	addMouseMotionListener(this);
     	addMouseWheelListener(this);
-    	KeyAdapter keyCase = new KeyAdapter() {
-        	public void keyReleased(KeyEvent e) {
-        		String Key = KeyEvent.getKeyText(e.getKeyCode());
-                switch(Key)
-                {
-                case "2":
-                	func.nApprox = (func.nApprox < func.size)?func.nApprox + 1:func.size;
-                	break;
-            	case "1":
-            		func.nApprox = (func.nApprox > 2)?func.nApprox - 1:2;
-            		break;
-                }
-                func.approx.InitMatrix(func.nApprox);
-            	repaint();
-            	};
-    		};
-    	addKeyListener(keyCase);
 	    setVisible(true);
 	}
     
@@ -131,6 +125,21 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		LastVecX = PosXVec;
 		LastVecY = PosXVec;
 		activeButton = e.getButton();
+		if (func.GetPointsFlag) 
+		{
+			DotsList.removeSelectionInterval(0, func.DotsArray.size() - 1);
+			paint.setActionRadius((Paint.getPointsRadius() + 1)/paint.Scale);
+			for (int i = 0; i < func.size; i++)
+			{
+				if ((func.X[i] + 0.1 > MouseTransX - paint.getActionRadius())&&
+		    		   (func.X[i] + 0.1 < MouseTransX + paint.getActionRadius()))
+				if ((func.Y[i] > MouseTransY - paint.getActionRadius())&&
+				   (func.Y[i] < MouseTransY + paint.getActionRadius()))
+				{
+					DotsList.setSelectedIndex(i);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -151,29 +160,66 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		MouseYNow = e.getY();
 		MouseXLast = e.getX();
 		MouseYLast = e.getY();
-		ActionPoint = -1;
+		ActionPoint.clear();
 		allocation = false;
 		activeButton = e.getButton();
-		if ((func.GetPointsFlag)&&(editing))
+		if (func.GetPointsFlag)
 		{
-			Paint.setActionRadius((Paint.getPointsRadius() + 1)/paint.Scale);
+			paint.setActionRadius((Paint.getPointsRadius() + 1)/paint.Scale);
 			for (int i = 0; i < func.size; i++)
 			{
-				if ((func.X[i] + 0.1 > MouseTransX - Paint.getActionRadius())&&
-		    		   (func.X[i] + 0.1 < MouseTransX + Paint.getActionRadius()))
-				if ((func.Y[i] > MouseTransY - Paint.getActionRadius())&&
-				   (func.Y[i] < MouseTransY + Paint.getActionRadius()))
+				if ((func.X[i] + 0.1 > MouseTransX - paint.getActionRadius())&&
+		    		   (func.X[i] + 0.1 < MouseTransX + paint.getActionRadius()))
+				if ((func.Y[i] > MouseTransY - paint.getActionRadius())&&
+				   (func.Y[i] < MouseTransY + paint.getActionRadius()))
 				{
-					ActionPoint = i;
-					return;
+					ActionPoint.add(i);
 				}
 			}
 			
+		}
+		if (ActionPoint.size() != 0) 
+		{
+			DotsList.removeSelectionInterval(0, func.DotsArray.size() - 1);
+			for (int i = 0; i < ActionPoint.size(); i++)
+				DotsList.setSelectedIndex(ActionPoint.get(i));
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {	//Отжатие
+		MouseXNow = e.getX();
+		MouseYNow = e.getY();
+		if (allocation)
+		{
+			if (func.GetPointsFlag)
+			{
+				double coordlXLast = paint.PixelToCoordX(MouseXLast);
+				double coordlYLast = paint.PixelToCoordY(MouseYLast);
+				double coordlXNow = paint.PixelToCoordX(MouseXNow);
+				double coordlYNow = paint.PixelToCoordY(MouseYNow);
+				double minX = Math.min(coordlXLast, coordlXNow);
+				double maxX = Math.max(coordlXLast, coordlXNow);
+				double minY = Math.min(coordlYLast, coordlYNow);
+				double maxY = Math.max(coordlYLast, coordlYNow);
+				//paint.setActionRadius((Paint.getPointsRadius() + 1)/paint.Scale);
+				for (int i = 0; i < func.size; i++)
+				{
+					if ((func.X[i] + 0.1 >= minX)&&(func.X[i] + 0.1 <= maxX)&&
+							(func.Y[i] >= minY)&&(func.Y[i] <= maxY))
+					{
+						ActionPoint.add(i);
+					}
+				}
+			}
+			if (ActionPoint.size() != 0) 
+			{
+				int tmp_int[] = new int[ActionPoint.size()];
+				for (int i = 0; i < ActionPoint.size(); i++)
+					tmp_int[i] = ActionPoint.get(i);
+				DotsList.setSelectedIndices(tmp_int);
+			}
+		}
 		allocation = false;
 		activeButton = -1;
 		repaint();
@@ -181,29 +227,30 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 
 	@Override
 	public void mouseDragged(MouseEvent e) {	//Перетаскивание
+		double LastMouseTrans = MouseTransY;
+		int[] tmp_o = DotsList.getSelectedIndices();
 		switch (activeButton) {
 		case 1:
-			if ((func.GetPointsFlag)&&(ActionPoint != -1))
+			MouseX = e.getX();
+			MouseY = e.getY();
+			if ((func.GetPointsFlag)&&(tmp_o.length != 0)&&(ActiveKey == 17)&&(editing))
 			{
 				// Drag
-				MouseX = e.getX();
-				MouseY = e.getY();
 				MouseTransX = (MouseX - paint.PosX)/paint.Scale;
 				MouseTransY = -(MouseY - paint.PosY)/paint.Scale;
 				MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
 				MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
-				func.Y[ActionPoint] = MouseTransY;
-				//t_Poly.F[ActionPoint] = MouseTransY;
-				if (func.GetPointsFlag == true)  
-					func.Y[ActionPoint] = MouseTransY;
-				func.Y[ActionPoint] = MouseTransY;
+				for (int i = 0; i < tmp_o.length; i++)
+				{
+					func.Y[tmp_o[i]] += MouseTransY - LastMouseTrans;
+				}
 				if (boolDrawGraphPoly) func.interp.InitMatrix();
 				if (boolDrawGraphApprox) func.approx.InitMatrix(func.nApprox);
 				if (boolDrawGraphSpline) func.spline.build_spline();
 				//paint.func = func;
 				repaint();
 			}
-			else if (editing)
+			else
 			{
 				allocation = true;
 				MouseXNow = e.getX();
@@ -212,7 +259,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 			}
 			break;
 		case 3:
-			if (ActionPoint == -1)
+			if (tmp_o.length == 0)
 			{
 				// Move
 				PosXVec = e.getX() - MouseX + LastVecX;
@@ -236,7 +283,6 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		LastVecX = PosXVec;
 		LastVecY = PosYVec;
 		repaint(65, paint.height - 60, 50, 30);
-		
 	}
 
 	@Override
@@ -245,9 +291,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		double speed = 1.1;
 		if (notches < 0) {
 			ScaleVec=(ScaleVec<100)?ScaleVec*speed:ScaleVec;
-			//ScaleVec=(paint.grid_power != 0.03125)?ScaleVec*speed:ScaleVec;
 		} else {
-			//System.out.println(ScaleVec);
 			ScaleVec=(ScaleVec>0.1)?ScaleVec/speed:ScaleVec;
 		}
 		PosXVec = (PosXVec/paint.Scale)*(paint.height/(paint.BorderMax - paint.BorderMin)) * ScaleVec * 95/100;

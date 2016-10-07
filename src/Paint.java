@@ -6,7 +6,7 @@ public class Paint {
 	double BorderMin = -20;
 	double BorderMax = 20;
     static double ceil = 20;
-	private static double ActionRadius = 0.5;
+	private double ActionRadius = 0.5;
 	
 	private double xGraphPoly[];
 	private double yGraphPoly[];
@@ -35,6 +35,14 @@ public class Paint {
 	int CoordToPixelY(double coord)
 	{
 		return (int)Math.round(-coord*Scale + PosY);
+	}
+	double PixelToCoordX(double pixel)
+	{
+		return (pixel - PosX)/Scale;
+	}
+	double PixelToCoordY(double pixel)
+	{
+		return (PosY - pixel)/Scale;
 	}
 	
 	Function func;
@@ -217,11 +225,11 @@ public class Paint {
 		PointsRadius = pointsRadius;
 	}
 
-	public static double getActionRadius() {
+	public double getActionRadius() {
 		return ActionRadius;
 	}
 
-	public static void setActionRadius(double actionRadius) {
+	public void setActionRadius(double actionRadius) {
 		ActionRadius = actionRadius;
 	}
 

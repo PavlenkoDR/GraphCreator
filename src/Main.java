@@ -6,13 +6,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
-public class Main {
 
+public class Main {
     Main()
     {
     	GraphFrame frame = new GraphFrame("Frame", 800, 600);
     	//frame.SetDrawExtraPoly(true);
     	frame.SetDrawSpline(true);
+    	frame.requestFocusInWindow();
+    	frame.setSize(800, 600);
     }
     public static void main(String[] args){
     	new Main();

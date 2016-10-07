@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.io.File;
@@ -26,9 +29,10 @@ import javax.swing.JScrollPane;
 
 
 public class GraphFrame extends JFrame{
-
+	
+	
 	private static final long serialVersionUID = 1L;
-	private GraphPanel Graph;
+	public GraphPanel Graph;
 	private JPanel Panel1;
 	private JButton ButtonOpen;
 	private JButton ButtonApprox;
@@ -39,9 +43,9 @@ public class GraphFrame extends JFrame{
 	private JCheckBox CheckBoxExtraPoly;
 	private SpinnerModel model;
 	private JSpinner spinner;
-	private JList<Object> DotsList;
 	JScrollPane southScroll;
 	JPanel Panel2;
+	
 	public void SetFunc(Function func)
 	{
 		Graph.paint.SetFunc(func);
@@ -86,6 +90,8 @@ public class GraphFrame extends JFrame{
 	GraphFrame(String name, int width, int height)
     {
     	super(name);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
 	   	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	//TPanel Panel1 = new TPanel();
     	setLocationRelativeTo(null); //open on center
@@ -195,11 +201,12 @@ public class GraphFrame extends JFrame{
     	Panel1.add(spinner);
   		ButtonApprox.setEnabled(false);
   		spinner.setEnabled(false);
-  		DotsList = new JList<Object>();
-  		DotsList.setLayoutOrientation(JList.VERTICAL);          
-  		southScroll = new JScrollPane(DotsList);
+  		Graph.DotsList = new JList<Object>();
+  		Graph.DotsList.setLayoutOrientation(JList.VERTICAL);          
+  		southScroll = new JScrollPane(Graph.DotsList);
         southScroll.setPreferredSize(new Dimension(100, 100));
   		southScroll.setSize(100, 300);
+  	    GraphListener graphListener = new GraphListener(this);
   		Panel2 = new JPanel();
   		Panel2.setLayout(new GridBagLayout());
   		Panel2.add(southScroll, new GridBagConstraints(
@@ -217,7 +224,7 @@ public class GraphFrame extends JFrame{
  		   			if (Graph.func.GetPointsFlag) 
  		   			{
  		   				Graph.func.createDotsArray();
- 		   				DotsList.setListData(Graph.func.DotsArray.toArray());
+ 		   				Graph.DotsList.setListData(Graph.func.DotsArray.toArray());
  		   				//DotsList.setSelectedIndices(new int[]{1, 2});
  		   				//if (DotsList.isSelectedIndex(2)) System.out.println("!!!");
  		   			}
@@ -301,6 +308,17 @@ public class GraphFrame extends JFrame{
  	      		}
     	});
     	Graph.repaint();
+    	addKeyListener(graphListener);
+  		Graph.addKeyListener(graphListener);
+  		Panel1.addKeyListener(graphListener);
+  		Panel2.addKeyListener(graphListener);
+  		CheckBox1.addKeyListener(graphListener);
+  		CheckBoxApprox.addKeyListener(graphListener);
+  		CheckBoxExtraPoly.addKeyListener(graphListener);
+  		CheckBoxPoly.addKeyListener(graphListener);
+  		CheckBoxSpline.addKeyListener(graphListener);
+  		ButtonApprox.addKeyListener(graphListener);
+  		ButtonOpen.addKeyListener(graphListener);
     	setVisible(true);
     }
 }
