@@ -58,7 +58,7 @@ public class Paint {
 		func = _func;
 		if (func.GetPointsFlag)
 		{
-			double tmpX = (func.X[func.size - 1] - func.X[0])*2;
+			double tmpX = (func.X[func.size - 1] - func.X[0])*1.2;
 			//double tmpY = (func.maxY - func.minY)*2;
 			
 			BorderMax = tmpX;

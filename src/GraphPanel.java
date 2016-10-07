@@ -28,8 +28,8 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	private double LastVecX = 0, LastVecY = 0;
 	private double MouseTransX, MouseTransY;
 	
-	private double PosXVec = 0, PosYVec = 0;
-	private double ScaleVec = 1;
+	public double PosXVec = 0, PosYVec = 0;
+	public double ScaleVec = 1;
 
 	public boolean editing;
 	public boolean 	boolDrawGraphApprox, 

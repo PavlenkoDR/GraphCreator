@@ -36,6 +36,7 @@ public class GraphFrame extends JFrame{
 	private JPanel Panel1;
 	private JButton ButtonOpen;
 	private JButton ButtonApprox;
+	private JButton ButtonGoToCenter;
 	private JCheckBox CheckBox1;
 	private JCheckBox CheckBoxPoly;
 	private JCheckBox CheckBoxApprox;
@@ -165,6 +166,7 @@ public class GraphFrame extends JFrame{
 			GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 200, 0));
     	ButtonOpen = new JButton("Открыть файл");
     	ButtonApprox = new JButton("Аппроксимировать");
+    	ButtonGoToCenter = new  JButton("Центровать");
     	final JFileChooser fileopen = new JFileChooser(); 
         // Сам слушатель:
         ChangeListener listener = new ChangeListener() {
@@ -197,6 +199,7 @@ public class GraphFrame extends JFrame{
     	Panel1.add(CheckBoxSpline);
     	CheckBox1 = new JCheckBox("Редактирование");
     	Panel1.add(CheckBox1);
+    	Panel1.add(ButtonGoToCenter);
     	Panel1.add(ButtonApprox);
     	Panel1.add(spinner);
   		ButtonApprox.setEnabled(false);
@@ -244,6 +247,14 @@ public class GraphFrame extends JFrame{
   		  	    	Graph.func.approx.InitMatrix(Graph.func.nApprox);
   		            Graph.repaint();
   		    	}
+  		    }
+    	});  
+    	ButtonGoToCenter.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e){
+    			Graph.PosXVec = 0;
+    			Graph.PosYVec = 0;
+    			Graph.ScaleVec = 1;
+    			Graph.repaint();
   		    }
     	});   
     	CheckBox1.addActionListener(new ActionListener() {
@@ -317,6 +328,7 @@ public class GraphFrame extends JFrame{
   		CheckBoxSpline.addKeyListener(graphListener);
   		ButtonApprox.addKeyListener(graphListener);
   		ButtonOpen.addKeyListener(graphListener);
+  		ButtonGoToCenter.addKeyListener(graphListener);
   		southScroll.addKeyListener(graphListener);
   		Graph.DotsList.addKeyListener(graphListener);
     	Graph.repaint();
