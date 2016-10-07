@@ -307,8 +307,6 @@ public class GraphFrame extends JFrame{
  		    	Graph.repaint();
  	      		}
     	});
-    	Graph.repaint();
-    	addKeyListener(graphListener);
   		Graph.addKeyListener(graphListener);
   		Panel1.addKeyListener(graphListener);
   		Panel2.addKeyListener(graphListener);
@@ -319,6 +317,9 @@ public class GraphFrame extends JFrame{
   		CheckBoxSpline.addKeyListener(graphListener);
   		ButtonApprox.addKeyListener(graphListener);
   		ButtonOpen.addKeyListener(graphListener);
+  		southScroll.addKeyListener(graphListener);
+  		Graph.DotsList.addKeyListener(graphListener);
+    	Graph.repaint();
     	setVisible(true);
     }
 }

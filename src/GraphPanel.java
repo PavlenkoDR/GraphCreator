@@ -125,9 +125,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		LastVecX = PosXVec;
 		LastVecY = PosXVec;
 		activeButton = e.getButton();
-		if (func.GetPointsFlag) 
+		if (ActiveKey != 17) ActionPoint.clear();
+		if (func.GetPointsFlag)
 		{
-			DotsList.removeSelectionInterval(0, func.DotsArray.size() - 1);
 			paint.setActionRadius((Paint.getPointsRadius() + 1)/paint.Scale);
 			for (int i = 0; i < func.size; i++)
 			{
@@ -136,9 +136,17 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 				if ((func.Y[i] > MouseTransY - paint.getActionRadius())&&
 				   (func.Y[i] < MouseTransY + paint.getActionRadius()))
 				{
-					DotsList.setSelectedIndex(i);
+					ActionPoint.add(i);
 				}
 			}
+			if (ActionPoint.size() != 0) 
+			{
+				int tmp_int[] = new int[ActionPoint.size()];
+				for (int i = 0; i < ActionPoint.size(); i++)
+					tmp_int[i] = ActionPoint.get(i);
+				DotsList.setSelectedIndices(tmp_int);
+			}
+			
 		}
 	}
 
@@ -160,9 +168,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		MouseYNow = e.getY();
 		MouseXLast = e.getX();
 		MouseYLast = e.getY();
-		ActionPoint.clear();
 		allocation = false;
 		activeButton = e.getButton();
+		if (ActiveKey != 17) ActionPoint.clear();
 		if (func.GetPointsFlag)
 		{
 			paint.setActionRadius((Paint.getPointsRadius() + 1)/paint.Scale);
@@ -176,13 +184,14 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 					ActionPoint.add(i);
 				}
 			}
+			if (ActionPoint.size() != 0) 
+			{
+				int tmp_int[] = new int[ActionPoint.size()];
+				for (int i = 0; i < ActionPoint.size(); i++)
+					tmp_int[i] = ActionPoint.get(i);
+				DotsList.setSelectedIndices(tmp_int);
+			}
 			
-		}
-		if (ActionPoint.size() != 0) 
-		{
-			DotsList.removeSelectionInterval(0, func.DotsArray.size() - 1);
-			for (int i = 0; i < ActionPoint.size(); i++)
-				DotsList.setSelectedIndex(ActionPoint.get(i));
 		}
 	}
 
@@ -233,13 +242,15 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		case 1:
 			MouseX = e.getX();
 			MouseY = e.getY();
-			if ((func.GetPointsFlag)&&(tmp_o.length != 0)&&(ActiveKey == 17)&&(editing))
+			System.out.println(func.GetPointsFlag + " " + tmp_o.length + " " + ActiveKey + " " + editing);
+			if ((func.GetPointsFlag)&&(tmp_o.length > 0)&&(ActiveKey == 17)&&(editing))
 			{
 				// Drag
 				MouseTransX = (MouseX - paint.PosX)/paint.Scale;
 				MouseTransY = -(MouseY - paint.PosY)/paint.Scale;
 				MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
 				MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
+				System.out.println("!");
 				for (int i = 0; i < tmp_o.length; i++)
 				{
 					func.Y[tmp_o[i]] += MouseTransY - LastMouseTrans;
@@ -259,13 +270,10 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 			}
 			break;
 		case 3:
-			if (tmp_o.length == 0)
-			{
-				// Move
-				PosXVec = e.getX() - MouseX + LastVecX;
-				PosYVec = e.getY() - MouseY + LastVecY;
-				repaint();
-			}
+			// Move
+			PosXVec = e.getX() - MouseX + LastVecX;
+			PosYVec = e.getY() - MouseY + LastVecY;
+			repaint();
 			break;
 		default:
 			break;

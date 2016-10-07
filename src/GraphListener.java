@@ -14,9 +14,9 @@ public class GraphListener implements KeyListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-        //System.out.println("keyPressed");
         String Key = KeyEvent.getKeyText(e.getKeyCode());
         frame.Graph.ActiveKey = e.getKeyCode();
+		//System.out.println(Key);
         switch(Key)
         {
         case "2":
@@ -41,6 +41,7 @@ public class GraphListener implements KeyListener{
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		//System.out.println("keyReleased");
         frame.Graph.ActiveKey = 0;
 	}    
 }
