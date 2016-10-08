@@ -46,6 +46,11 @@ public class GraphFrame extends JFrame{
 	private JSpinner spinner;
 	JScrollPane southScroll;
 	JPanel Panel2;
+
+	public static void setQuality(double x)
+	{
+		Paint.setQuality(x);
+	}
 	
 	public void SetFunc(Function func)
 	{

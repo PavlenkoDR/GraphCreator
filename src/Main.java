@@ -15,6 +15,7 @@ public class Main {
     	frame.SetDrawSpline(true);
     	frame.requestFocusInWindow();
     	frame.setSize(800, 600);
+    	GraphFrame.setQuality(10);
     }
     public static void main(String[] args){
     	new Main();

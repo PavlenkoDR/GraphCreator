@@ -102,17 +102,6 @@ public class Function {
 	    nApprox = 2;
     	GetPointsFlag = true;
 	};
-
-	public Function(Function func){
-    	GetPointsFlag = func.GetPointsFlag;
-    	size = func.size;
-    	nApprox = func.nApprox;
-    	X = func.X;
-    	Y = func.Y;
-    	interp = func.interp;
-    	approx = func.approx;
-    	spline = func.spline;
-	}
 	
 	public Function(){
     	GetPointsFlag = false;

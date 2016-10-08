@@ -5,7 +5,10 @@ import java.awt.Graphics;
 public class Paint {
 	double BorderMin = -20;
 	double BorderMax = 20;
-    static double ceil = 20;
+	double BorderDotsMin = -20;
+	double BorderDotsMax = 20;
+    private double ceil = 20;
+    private static double quality = 5;
 	private double ActionRadius = 0.5;
 	
 	private double xGraphPoly[];
@@ -28,6 +31,11 @@ public class Paint {
 	
 	public void SetDrawGraphExtraPoly(boolean f){boolDrawGraphExtraPoly = f;}
 
+	public static void setQuality(double x)
+	{
+		quality = (x<0.1)?0.1:((x>10)?10:x);
+	}
+	
 	int CoordToPixelX(double coord)
 	{
 		return (int)Math.round(coord*Scale + PosX);
@@ -54,31 +62,29 @@ public class Paint {
 	}
 	public void SetFunc(Function _func)
 	{
-		if (func == _func) return;
+		//if (func == _func) return;
 		func = _func;
 		if (func.GetPointsFlag)
 		{
-			double tmpX = (func.X[func.size - 1] - func.X[0])*1.2;
-			//double tmpY = (func.maxY - func.minY)*2;
-			
-			BorderMax = tmpX;
-			BorderMin = -tmpX;
-
-			xGraphPoly = new double[(int)Math.round((BorderMax - BorderMin)*ceil) + 1];
-			yGraphPoly = new double[(int)Math.round((BorderMax - BorderMin)*ceil) + 1];
-			xGraphApprox = new double[(int)Math.round((BorderMax - BorderMin)*ceil) + 1];
-			yGraphApprox = new double[(int)Math.round((BorderMax - BorderMin)*ceil) + 1];
-			xGraphSpline = new double[(int)Math.round((BorderMax - BorderMin)*ceil) + 1];
-			yGraphSpline = new double[(int)Math.round((BorderMax - BorderMin)*ceil) + 1];
+			BorderDotsMin = PixelToCoordX(0);
+			BorderDotsMax = PixelToCoordX(width);
+			ceil = quality*width/((BorderDotsMax - BorderDotsMin)*10);
+			System.out.println((int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1);
+			xGraphPoly = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
+			yGraphPoly = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
+			xGraphApprox = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
+			yGraphApprox = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
+			xGraphSpline = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
+			yGraphSpline = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
 			double shift = 0;
-    		for (double i = BorderMin; i <= BorderMax; i+= 1/(double)ceil)
+    		for (double i = BorderDotsMin; i <= BorderDotsMax; i+= 1/(double)ceil)
     		{
-    			xGraphPoly[(int)Math.round((i - BorderMin)*ceil)] = i + shift;
-    			yGraphPoly[(int)Math.round((i - BorderMin)*ceil)] = -(func.interp.getValue(i + shift));
-    			xGraphApprox[(int)Math.round((i - BorderMin)*ceil)] = i + shift;
-    			yGraphApprox[(int)Math.round((i - BorderMin)*ceil)] = -(func.approx.getValue(i + shift, func.nApprox));
-    			xGraphSpline[(int)Math.round((i - BorderMin)*ceil)] = i + shift;
-    			yGraphSpline[(int)Math.round((i - BorderMin)*ceil)] = -(func.spline.getValue(i + shift));
+    			xGraphPoly[(int)Math.round((i - BorderDotsMin)*ceil)] = i + shift;
+    			yGraphPoly[(int)Math.round((i - BorderDotsMin)*ceil)] = -(func.interp.getValue(i + shift));
+    			xGraphApprox[(int)Math.round((i - BorderDotsMin)*ceil)] = i + shift;
+    			yGraphApprox[(int)Math.round((i - BorderDotsMin)*ceil)] = -(func.approx.getValue(i + shift, func.nApprox));
+    			xGraphSpline[(int)Math.round((i - BorderDotsMin)*ceil)] = i + shift;
+    			yGraphSpline[(int)Math.round((i - BorderDotsMin)*ceil)] = -(func.spline.getValue(i + shift));
     		}
 		}
 	}
@@ -104,20 +110,20 @@ public class Paint {
 		double from, to;
 		if (boolDrawGraphExtraPoly)
 		{
-			from = BorderMin;
-			to = BorderMax;
+			from = BorderDotsMin;
+			to = BorderDotsMax;
 		}
 		else
 		{
-			from = func.X[0];
-			to = func.X[func.size - 1];
+			from = (func.X[0]>BorderDotsMin)?func.X[0]:BorderDotsMin;
+			to = (func.X[func.size - 1]<BorderDotsMax)?func.X[func.size - 1]:BorderDotsMax;
 		}
 	    for (double i = from; i <= to - 1/(double)ceil; i+= 1/(double)ceil)
         {
-	    	double x1 = _x[(int)Math.round((i - BorderMin)*ceil)]*Scale + PosX;
-        	double y1 = _y[(int)Math.round((i - BorderMin)*ceil)]*Scale + PosY;
-        	double x2 = _x[(int)Math.round((i - BorderMin)*ceil)+1]*Scale + PosX;
-        	double y2 = _y[(int)Math.round((i - BorderMin)*ceil)+1]*Scale + PosY;
+	    	double x1 = _x[(int)Math.round((i - BorderDotsMin)*ceil)]*Scale + PosX;
+        	double y1 = _y[(int)Math.round((i - BorderDotsMin)*ceil)]*Scale + PosY;
+        	double x2 = _x[(int)Math.round((i - BorderDotsMin)*ceil)+1]*Scale + PosX;
+        	double y2 = _y[(int)Math.round((i - BorderDotsMin)*ceil)+1]*Scale + PosY;
 		  	if (y1 < 0) y1 = -2;
 		  	else if (y1 > height) y1 = height + 2;
 		  	if (y2 < 0) y2 = -2;
