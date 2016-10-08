@@ -1,6 +1,8 @@
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,8 +13,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -37,6 +45,7 @@ public class GraphFrame extends JFrame{
 	private JButton ButtonOpen;
 	private JButton ButtonApprox;
 	private JButton ButtonGoToCenter;
+	private JButton ButtonSaveImage;
 	private JCheckBox CheckBox1;
 	private JCheckBox CheckBoxPoly;
 	private JCheckBox CheckBoxApprox;
@@ -92,6 +101,16 @@ public class GraphFrame extends JFrame{
 	{
  	   Graph.boolDrawGraphSpline = f;
  	   CheckBoxSpline.setSelected(f);
+	}
+	public void saveScreen(String name)
+	{
+		try {
+			ImageIO.write(Graph.getImage(), "png", new File(name));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Graph.screenRun = false;
 	}
 	GraphFrame(String name, int width, int height)
     {
@@ -172,6 +191,7 @@ public class GraphFrame extends JFrame{
     	ButtonOpen = new JButton("Открыть файл");
     	ButtonApprox = new JButton("Аппроксимировать");
     	ButtonGoToCenter = new  JButton("Центровать");
+    	ButtonSaveImage = new  JButton("Скриншот");
     	final JFileChooser fileopen = new JFileChooser(); 
         // Сам слушатель:
         ChangeListener listener = new ChangeListener() {
@@ -205,6 +225,7 @@ public class GraphFrame extends JFrame{
     	CheckBox1 = new JCheckBox("Редактирование");
     	Panel1.add(CheckBox1);
     	Panel1.add(ButtonGoToCenter);
+    	Panel1.add(ButtonSaveImage);
     	Panel1.add(ButtonApprox);
     	Panel1.add(spinner);
   		ButtonApprox.setEnabled(false);
@@ -243,6 +264,7 @@ public class GraphFrame extends JFrame{
     	});
     	ButtonApprox.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e){
+    			saveScreen("image.png");
     			if (Graph.func.GetPointsFlag)
     			{
   		  	    	if ((int) spinner.getValue() > 2)
@@ -260,6 +282,19 @@ public class GraphFrame extends JFrame{
     			Graph.PosYVec = 0;
     			Graph.ScaleVec = 1;
     			Graph.repaint();
+  		    }
+    	});   
+	    ButtonSaveImage.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e){
+    			Date date = new Date();
+    			String dateString = date.toString();
+    			dateString = dateString.replace(" ", "_");
+    			dateString = dateString.replace(":", ".");
+    			File folder = new File("Image");
+    			if (!folder.exists()) {
+    				folder.mkdir();
+    			}
+    			saveScreen("Image/image"+dateString+".png");
   		    }
     	});   
     	CheckBox1.addActionListener(new ActionListener() {
@@ -332,6 +367,7 @@ public class GraphFrame extends JFrame{
   		CheckBoxPoly.addKeyListener(graphListener);
   		CheckBoxSpline.addKeyListener(graphListener);
   		ButtonApprox.addKeyListener(graphListener);
+  		ButtonSaveImage.addKeyListener(graphListener);
   		ButtonOpen.addKeyListener(graphListener);
   		ButtonGoToCenter.addKeyListener(graphListener);
   		southScroll.addKeyListener(graphListener);

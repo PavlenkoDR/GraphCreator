@@ -25,6 +25,8 @@ public class Paint {
 	int width;
 	int height;
    
+	boolean [] viz;
+	
 	private static int PointsRadius = 3;
 
 	public boolean boolDrawGraphExtraPoly;
@@ -69,13 +71,15 @@ public class Paint {
 			BorderDotsMin = PixelToCoordX(0);
 			BorderDotsMax = PixelToCoordX(width);
 			ceil = quality*width/((BorderDotsMax - BorderDotsMin)*10);
-			System.out.println((int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1);
 			xGraphPoly = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
 			yGraphPoly = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
 			xGraphApprox = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
 			yGraphApprox = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
 			xGraphSpline = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
 			yGraphSpline = new double[(int)Math.round((BorderDotsMax - BorderDotsMin)*ceil) + 1];
+			viz = new boolean[func.size];
+			for (int i = 0; i < func.size; i++)
+				viz[i] = true;
 			double shift = 0;
     		for (double i = BorderDotsMin; i <= BorderDotsMax; i+= 1/(double)ceil)
     		{
@@ -160,14 +164,45 @@ public class Paint {
 		
 	void DrawPoints(Graphics g)
 	{
-	        for (int i = 0; i < func.size; i++)
-        	{
-      		  	g.drawOval(
-      					CoordToPixelX(func.X[i]) - getPointsRadius(), 
-      		  			CoordToPixelY(func.Y[i]) - getPointsRadius(), 
-      					getPointsRadius()*2, 
-      					getPointsRadius()*2);
-        	}
+		/*
+		int [] clast = new int[func.size];
+		for (int i = 0; i < func.size; i++)
+			clast[i] = -1;
+		for (int i = 0; i < func.size; i++)
+			for (int j = 0; j < func.size; j++)
+				if ((Math.abs(func.X[i]*Scale - func.X[j]*Scale) < 2) && (Math.abs(func.Y[i]*Scale - func.Y[j]*Scale) < 2) && (i != j))
+				{
+					clast[i] = i;
+					clast[j] = i;
+				}
+		for (int i = 0; i < func.size; i++)
+		{
+			if (clast[i] > -1)
+			{
+				int j = i;
+				while (true)
+				{
+					if (j == func.size)
+						break;
+					if (clast[j] != clast[i])
+						break;
+					viz[j] = false;
+					j++;
+				}
+				viz[(j-i)/2] = true;
+				
+			}
+		}
+		*/
+	    for (int i = 0; i < func.size; i++)
+	    {
+	    	if (viz[i])
+      	  		g.drawOval(
+      				CoordToPixelX(func.X[i]) - getPointsRadius(), 
+      	  			CoordToPixelY(func.Y[i]) - getPointsRadius(), 
+      				getPointsRadius()*2, 
+      				getPointsRadius()*2);
+        }
 	}
 
 	void DrawGrid(Graphics g)
@@ -201,7 +236,7 @@ public class Paint {
 	}
 	void DrawCoord(Graphics g)
 	{
-    		g.setColor(new Color(0, 0, 0));
+    	g.setColor(new Color(0, 0, 0));
 
   	  	g.drawLine(
   	  			CoordToPixelX(0), 

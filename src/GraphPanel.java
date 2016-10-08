@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -44,8 +45,21 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	Paint paint;
 	List<Integer> ActionPoint;
 	boolean allocation;
+	boolean screenRun;
 	
 	int ActiveKey;
+	
+	BufferedImage imgResult;
+	Graphics gNow;
+	
+	public BufferedImage getImage()
+	{
+	    screenRun = true;
+	    imgResult = new BufferedImage((getWidth() <= 0)?100:getWidth(), (getHeight() <= 0)?100:getHeight(), BufferedImage.TYPE_INT_RGB);
+	    gNow = imgResult.getGraphics();
+	    paint(gNow);
+		return imgResult;
+	}
 	
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -88,8 +102,11 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 				(int)((MouseYLast < MouseYNow)?MouseYLast:MouseYNow), 
 				Math.abs((int)MouseXNow - (int)MouseXLast), 
 				Math.abs((int)MouseYNow - (int)MouseYLast));
-	  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
-	  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
+		if (!screenRun)
+		{
+		  	g.drawString("x =  " + MouseTransX, 40 , paint.height - 50);
+		  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
+		}
 	  	g.drawString("1:"+paint.grid_power, getSize().width - 70 , paint.height - 30);
 	  	/*
 	  	System.out.println(
@@ -118,6 +135,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
     	addMouseMotionListener(this);
     	addMouseWheelListener(this);
 	    setVisible(true);
+	    imgResult = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+	    gNow = imgResult.getGraphics();
+	    paint(gNow);
 	}
     
 	@Override
@@ -250,7 +270,6 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		case 1:
 			MouseX = e.getX();
 			MouseY = e.getY();
-			System.out.println(func.GetPointsFlag + " " + tmp_o.length + " " + ActiveKey + " " + editing);
 			if ((func.GetPointsFlag)&&(tmp_o.length > 0)&&(ActiveKey == 17)&&(editing))
 			{
 				// Drag
@@ -258,7 +277,6 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 				MouseTransY = -(MouseY - paint.PosY)/paint.Scale;
 				MouseTransX = new BigDecimal(MouseTransX).setScale(2, RoundingMode.UP).doubleValue();
 				MouseTransY = new BigDecimal(MouseTransY).setScale(2, RoundingMode.UP).doubleValue();
-				System.out.println("!");
 				for (int i = 0; i < tmp_o.length; i++)
 				{
 					func.Y[tmp_o[i]] += MouseTransY - LastMouseTrans;
