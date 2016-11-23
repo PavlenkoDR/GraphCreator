@@ -43,19 +43,19 @@ public class Paint {
 		return quality;
 	}
 	
-	int CoordToPixelX(double coord)
+	public int CoordToPixelX(double coord)
 	{
 		return (int)Math.round(coord*Scale + PosX);
 	}
-	int CoordToPixelY(double coord)
+	public int CoordToPixelY(double coord)
 	{
 		return (int)Math.round(-coord*Scale + PosY);
 	}
-	double PixelToCoordX(double pixel)
+	public double PixelToCoordX(double pixel)
 	{
 		return (pixel - PosX)/Scale;
 	}
-	double PixelToCoordY(double pixel)
+	public double PixelToCoordY(double pixel)
 	{
 		return (PosY - pixel)/Scale;
 	}
@@ -151,10 +151,26 @@ public class Paint {
         		double y1 = _y[i]*Scale + PosY;
         		double x2 = _x[i+1]*Scale + PosX;
         		double y2 = _y[i+1]*Scale + PosY;
-		  		  if (y1 < 0) y1 = -2;
-		  		  else if (y1 > height) y1 = height + 2;
-		  		  if (y2 < 0) y2 = -2;
-		  		  else if (y2 > height) y2 = height + 2;
+		  		if (y1 < -2) 
+		  		{
+		  			x1 = (x2-x1)*(-2-y1)/(y2-y1)+x1;
+		  			y1 = -2;
+		  	    }
+		  		else if (y1 > height + 2) 
+	  			{
+		  			x1 = (x2-x1)*(height + 2-y1)/(y2-y1)+x1;
+		  			y1 = height + 2;
+	  			}
+		  		if (y2 < -2) 
+		  		{
+		  			x2 = (x2-x1)*(-2-y1)/(y2-y1)+x2;
+		  			y2 = -2;
+		  		}
+		  		else if (y2 > height + 2) 
+		  		{
+		  			x2 = (x2-x1)*(height + 2-y1)/(y2-y1)+x2;
+		  			y2 = height + 2;
+		  		}
       		  	g.drawLine(
       				  (int)Math.round(x1), 
       				  (int)Math.round(y1), 
@@ -162,11 +178,14 @@ public class Paint {
       				  (int)Math.round(y2)
       				  );
         	}
+        	//(x-x1)/(x2-x1)=(y-y1)/(y2-y1)
+        	//y = (y2-y1)*(x-x1)/(x2-x1)+y1
+        	//x = (x2-x1)*(y-y1)/(y2-y1)+x1
 	}
 	
 	void DrawGraphLine(Graphics g)
 	{
-		DrawGraph(g, func.X, func.Y, func.size);
+		DrawGraph(g, func.X, func.inversY, func.size);
 	}
 	
 	void DrawPoints(Graphics g)
@@ -263,7 +282,6 @@ public class Paint {
 				(CoordToPixelX(BorderMin + 1) > 10)?((CoordToPixelX(BorderMin + 1) < width - 10)?(CoordToPixelX(BorderMin + 1) - 10):width - 10):0, 
 				CoordToPixelY(10/Scale));
 	}
-
 	public static int getPointsRadius() {
 		return PointsRadius;
 	}

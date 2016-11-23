@@ -17,14 +17,15 @@ import java.util.List;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
+import Another.Pair;
 import MathPars.MatchParser;
-
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 //Window Builder
 
 public class GraphPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
 
+	static Pair<Function, Color> make_pair(Function f, Color c){return new Pair<Function, Color>(f, c);}
+	
 	private static final long serialVersionUID = 1L;
 	private double MouseX, MouseY;
 	private double MouseXNow, MouseYNow;
@@ -40,17 +41,18 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 					boolDrawGraphPoly,
 					boolDrawGraphSpline,
 					boolDrawGraphExtraPoly,
-					boolDrawGraphLine = false;
+					boolDrawGraphLine = false,
+					boolDrawSelectedArea = false;
 	int activeButton;
 	
 	JList<Object> DotsList;
 	
-	Function func;
+	Function func = null;
+	Function nowfunc;
 	Paint paint;
 	List<Integer> ActionPoint;
-	//List<String> StringList = new ArrayList<String>();
-	List<Function> FunctionList = new ArrayList<Function>();
-	List<Color> ColorList = new ArrayList<Color>();
+	List<Pair<Function, Color> > FunctionList = new ArrayList<Pair<Function, Color> >();
+	int selectedID;
 	private MatchParser p = new MatchParser();
 	boolean allocation;
 	boolean screenRun;
@@ -60,17 +62,9 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	BufferedImage imgResult;
 	Graphics gNow;
 	
-	public void pushFunction(Function f, Color c)
+	public void pushFunction1(Function f, Color c)
 	{
-		ColorList.add(c);
-		FunctionList.add(f);
-	}
-	
-	public void DrawGraph(String s, double x0, double xn, Color c)
-	{
-		//StringList.add(s);
-		ColorList.add(c);
-		FunctionList.add(new Function(s, x0, xn, paint));
+		FunctionList.add(make_pair(f, c));
 	}
 	
 	public BufferedImage getImage()
@@ -84,48 +78,92 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	
 	public void paint(Graphics g) {
 		super.paint(g);
-		paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
+		//paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
   		paint.PosX = getSize().width/2 + PosXVec;
   		paint.PosY = getSize().height/2 + PosYVec;
   		paint.Scale = ((Math.min(paint.width, paint.height))/Math.abs(paint.BorderMax - paint.BorderMin)) * ScaleVec * 95/100;
-  		paint.SetFunc(func);
   		paint.DrawGrid(g);
   		paint.DrawCoord(g);
   		paint.SetDrawGraphExtraPoly(boolDrawGraphExtraPoly);
-  		if (func.GetPointsFlag)
-  		{
-  			g.setColor(Color.RED);
-  			g.drawString("Input points ", 40 , 95);
-  			//paint.DrawPoints(g);
+		if (boolDrawSelectedArea)
+		{
+			g.setColor(Color.RED);
+			g.drawRect(paint.CoordToPixelX(func.X[0]) - 5, 
+					   paint.CoordToPixelY(func.maxY) - 5, 
+					   paint.CoordToPixelX(func.X[func.size - 1]) - paint.CoordToPixelX(func.X[0]) + 10, 
+					   -paint.CoordToPixelY(func.maxY) + paint.CoordToPixelY(func.minY) + 10);
 		}
 
-  		if (boolDrawGraphPoly)
-  		{
-  	  	  	g.setColor(Color.MAGENTA);
-  	  		g.drawString("Matrix Interpolation ", 40 , 50);
-  	  		if (func.GetPointsFlag)paint.DrawGraphPoly(g);
-  		}
-  		if (boolDrawGraphApprox)
-  		{
-  	  	  	g.setColor(Color.BLUE);
-  	  		g.drawString("Approximation " + func.nApprox + " power", 40 , 65);
-  	  		if (func.GetPointsFlag) paint.DrawGraphApprox(g);
-  		}
-  		if (boolDrawGraphSpline)
-  		{
-  	  	  	g.setColor(Color.ORANGE);
-  	  		g.drawString("Spline Interpolation ", 40 , 80);
-  	  	  	if (func.GetPointsFlag)paint.DrawGraphSpline(g);
-  		}
-  		if (boolDrawGraphLine)
-  		{
-  	  	  	g.setColor(Color.BLACK);
-  	  	  	if (func.GetPointsFlag)paint.DrawGraphLine(g);
-  		}
+		g.setColor(new Color(200, 200, 200));
+		if (!boolDrawGraphLine)g.drawString("Lines ", 40 , 35);
+	  	if (!boolDrawGraphPoly) g.drawString("Matrix Interpolation ", 40 , 50);
+	  	if (!boolDrawGraphApprox)g.drawString("Approximation " + "_" + " power", 40 , 65);
+	  	if (!boolDrawGraphSpline)g.drawString("Spline Interpolation ", 40 , 80);
+	  	if (selectedID == -1) return;
   		for (int i = 0; i < FunctionList.size(); i++)
   		{
-  	  	  	g.setColor(ColorList.get(i));
-  	  	  	paint.DrawGraph(g, FunctionList.get(i).X, FunctionList.get(i).Y, FunctionList.get(i).size);
+  			nowfunc = FunctionList.get(i).getL();
+  			if (!nowfunc.Enable) continue;
+  	  		paint.SetFunc(nowfunc);
+  	  		if (nowfunc.GetPointsFlag)
+  	  		{
+  	  			g.setColor(Color.RED);
+  	  			g.drawString("Input points ", 40 , 95);
+  	  			//paint.DrawPoints(g);
+  			}
+
+  	  		if (boolDrawGraphPoly)
+  	  		{
+  	  			if (FunctionList.get(i).getR() == null)
+  	  	  			g.setColor(Color.MAGENTA);
+  	  			else 
+  	  				g.setColor(FunctionList.get(i).getR());
+  	  	  		if (nowfunc.GetPointsFlag)paint.DrawGraphPoly(g);
+  	  			if (FunctionList.get(selectedID).getR() == null)
+  	  	  			g.setColor(Color.MAGENTA);
+  	  			else 
+  	  				g.setColor(FunctionList.get(selectedID).getR());
+  	  			g.drawString("Matrix Interpolation ", 40 , 50);
+  	  		}
+  	  		if (boolDrawGraphApprox)
+  	  		{
+  	  			if (FunctionList.get(i).getR() == null)
+  	  	  	  	  	g.setColor(Color.BLUE);
+  	  			else 
+  	  				g.setColor(FunctionList.get(i).getR());
+  	  	  		if (nowfunc.GetPointsFlag) paint.DrawGraphApprox(g);
+  	  			if (FunctionList.get(selectedID).getR() == null)
+  	  	  			g.setColor(Color.BLUE);
+  	  			else 
+  	  				g.setColor(FunctionList.get(selectedID).getR());
+  	  	  		g.drawString("Approximation " + nowfunc.nApprox + " power", 40 , 65);
+  	  		}
+  	  		if (boolDrawGraphSpline)
+  	  		{
+  	  			if (FunctionList.get(i).getR() == null)
+  	  	  	  	  	g.setColor(Color.ORANGE);
+  	  			else 
+  	  				g.setColor(FunctionList.get(i).getR());
+  	  	  	  	if (nowfunc.GetPointsFlag)paint.DrawGraphSpline(g);
+  	  			if (FunctionList.get(selectedID).getR() == null)
+  	  	  			g.setColor(Color.ORANGE);
+  	  			else 
+  	  				g.setColor(FunctionList.get(selectedID).getR());
+  	  	  		g.drawString("Spline Interpolation ", 40 , 80);
+  	  		}
+  	  		if (boolDrawGraphLine)
+  	  		{
+  	  			if (FunctionList.get(i).getR() == null)
+  	  	  	  	  	g.setColor(Color.BLACK);
+  	  			else 
+  	  				g.setColor(FunctionList.get(i).getR());
+  	  	  	  	if (nowfunc.GetPointsFlag)paint.DrawGraphLine(g);
+  	  			if (FunctionList.get(selectedID).getR() == null)
+  	  	  			g.setColor(Color.BLACK);
+  	  			else 
+  	  				g.setColor(FunctionList.get(selectedID).getR());
+  	  	  		g.drawString("Lines ", 40 , 35);
+  	  		}
   		}
 	  	g.setColor(Color.RED);
 		if (allocation) g.drawRect(
@@ -139,24 +177,13 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		  	g.drawString("y =  " + MouseTransY, 40 , paint.height - 30);
 		}
 	  	g.drawString("1:"+paint.grid_power, getSize().width - 70 , paint.height - 30);
-	  	/*
-	  	System.out.println(
-	  							"width: " + paint.width + "\t" +
-	  							"heigth: " + paint.height + "\t" +
-	  							"PosX: " + paint.PosX + "\t" +
-	  							"PosY: " + paint.PosY + "\t" +
-	  							"Scale: " + paint.Scale + "\t" +
-	  							"BorderMin: " + paint.BorderMin + "\t" +
-	  							"BorderMax: " + paint.BorderMax
-	  	);
-	  	*/
 	}
     
 	public GraphPanel()
 	{
 		super();
 		ActionPoint = new ArrayList<Integer>();
-    	func = new Function();
+    	//func = new Function();
 		boolDrawGraphApprox = false;
 		boolDrawGraphPoly = false;
 		boolDrawGraphSpline = false;

@@ -6,8 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import CHM.AdamsaMethod4;
 import CHM.EulersMethod;
-import CHM.RungeKutta;
+import CHM.ImproveEulersMethod;
+import CHM.RungeKutta4;
 import Graph.Function;
 import Graph.GraphFrame;
 import MathPars.MatchParser;
@@ -16,31 +18,29 @@ import MathPars.MatchParser;
 public class Main {
     Main()
     {
-    	//GraphFrame frame = new GraphFrame("Frame", 800, 600);
-    	//frame.SetDrawExtraPoly(true);
-    	//frame.SetDrawSpline(true);
-    	//frame.requestFocusInWindow();
-    	//frame.setSize(800, 600);
-    	GraphFrame.setQuality(5);
     }
     public static void main(String[] args){
     	long last_time = System.currentTimeMillis();
-    	RungeKutta euler = new CHM.RungeKutta("sin(x)", -Math.PI, Math.PI, 0.1, 0);
+    	GraphFrame frame;
+    	GraphFrame frame1 = new GraphFrame("Frame", 800, 600);
+    	frame = new GraphFrame("Frame", 800, 600);
+    	frame.SetDrawSpline(true);
+    	frame.requestFocusInWindow();
+    	frame.setSize(800, 600);
+    	AdamsaMethod4 euler = new AdamsaMethod4("sin(x)", -Math.PI, Math.PI, 0.1, 0);
     	//euler.printSolve(5);
     	//euler.exportSolve(5);
-    	GraphFrame tmp = euler.paintSolve(1.55);
-    	tmp.DrawGraph("0-cos(x)", -10, 10, Color.RED);
-    	Function errfunc = new Function(euler.size, euler.getX(), euler.getError("0-cos(x)"));
-    	tmp.Graph.pushFunction(errfunc, Color.BLUE);
-    	GraphFrame frame1 = new GraphFrame("Frame", 800, 600);
+    	euler.paintSolve(1.55, frame);
+    	frame.AddFunc("0-cos(x)", -10, 10, Color.BLUE, "-cos(x)");
+    	Function errfunc = new Function(euler.getSize(), euler.getX(), euler.getError("0-cos(x)"));
+    	frame.AddFunc(errfunc, Color.RED, "Error");
     	for (int i = 0; i < errfunc.size; i++)
     	{
     		errfunc.Y[i] *= 10000000;
     		System.out.println(errfunc.Y[i]);
     	}
     	errfunc = new Function(errfunc.size, errfunc.X, errfunc.Y);
-    	frame1.SetFunc(errfunc);
-    	frame1.SetDrawSpline(true);
+    	frame.AddFunc(errfunc, Color.RED, "Error*10000");
     	new Main();
     	System.out.println("Done! " + (System.currentTimeMillis() - last_time));
     }

@@ -15,14 +15,26 @@ import MathPars.MatchParser;
 
 
 public class Function {
+	
+	private double [] returnInvers(final double [] in)
+	{
+		double tmp[] = new double[in.length];
+		for (int i = 0; i < in.length; i++)
+			tmp[i] = -in[i];
+		return tmp;
+		
+	}
+	
 	public double X[];
 	public double Y[];
+	public double inversY[];
 	public int size;
 	public InterpMatrix interp;
 	public Approx approx;
 	public Spline spline;
     int nApprox = 2;
 	public boolean GetPointsFlag = false;
+	public boolean Enable = true;
 	double minY, maxY;
 	List<String> DotsArray;
 	
@@ -75,11 +87,20 @@ public class Function {
     	size = _size;
     	X = _X;
     	Y = _F;
+		minY = Y[0];
+		maxY = Y[0];
+		for (int i = 0; i < size; i++)
+		{
+			if (minY > Y[i]) minY = Y[i];
+			if (maxY < Y[i]) maxY = Y[i];
+		}
     	quickSort();
+    	inversY = returnInvers(Y);
 		interp = new InterpMatrix(size, X, Y);
 		approx = new Approx(size, X, Y);
 		spline = new Spline(size, X, Y);
 	    nApprox = 2;
+	    createDotsArray();
     	GetPointsFlag = true;
 	}
 	
@@ -96,14 +117,12 @@ public class Function {
 		try {
 			in = new Scanner(f);
 			size = in.nextInt();
-			System.out.println(size);
 			X = new double[size];
 			Y = new double[size];
 			for (int i = 0; i < size; i++)
 			{
 				X[i] = in.nextDouble();
 				Y[i] = in.nextDouble();
-				System.out.println(X[i] + " " + Y[i]);
 			}
 			minY = Y[0];
 			maxY = Y[0];
@@ -117,10 +136,12 @@ public class Function {
 			e.printStackTrace();
 		}
     	quickSort();
+    	inversY = returnInvers(Y);
 		interp = new InterpMatrix(size, X, Y);
 		approx = new Approx(size, X, Y);
 		spline = new Spline(size, X, Y);
 	    nApprox = 2;
+	    createDotsArray();
     	GetPointsFlag = true;
 	};
 	public Function(String str, Paint paint){
@@ -133,7 +154,6 @@ public class Function {
 			{
 				p.setVariable("x", i);
 				X[size] = i;
-				System.out.println("str: " + str);
 				Y[size] = p.Parse(str);
 				size++;
 			}
@@ -146,10 +166,12 @@ public class Function {
 			if (minY > Y[i]) minY = Y[i];
 			if (maxY < Y[i]) maxY = Y[i];
 		}
-		//interp = new InterpMatrix(size, X, Y);
-		//approx = new Approx(size, X, Y);
-		//spline = new Spline(size, X, Y);
+    	inversY = returnInvers(Y);
+		interp = new InterpMatrix(size, X, Y);
+		approx = new Approx(size, X, Y);
+		spline = new Spline(size, X, Y);
 	    nApprox = 2;
+	    createDotsArray();
     	GetPointsFlag = true;
 	};
 	public Function(String str, double x0, double xn, Paint paint){
@@ -175,11 +197,12 @@ public class Function {
 			if (minY > Y[i]) minY = Y[i];
 			if (maxY < Y[i]) maxY = Y[i];
 		}
-		System.out.println(str + " size: " + size);
-		//interp = new InterpMatrix(size, X, Y);
-		//approx = new Approx(size, X, Y);
-		//spline = new Spline(size, X, Y);
+		interp = new InterpMatrix(size, X, Y);
+		approx = new Approx(size, X, Y);
+		spline = new Spline(size, X, Y);
+    	inversY = returnInvers(Y);
 	    nApprox = 2;
+	    createDotsArray();
     	GetPointsFlag = true;
 	};
 	public Function(){

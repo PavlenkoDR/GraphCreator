@@ -1,6 +1,9 @@
 package Graph;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,6 +27,7 @@ import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -37,6 +41,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JComboBox;
+import Another.Pair;
 
 import MathPars.MatchParser;
 
@@ -47,6 +53,7 @@ public class GraphFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	public GraphPanel Graph;
 	private JPanel Panel1;
+	private JButton ButtonRemove;
 	private JButton ButtonOpen;
 	private JButton ButtonApprox;
 	private JButton ButtonGoToCenter;
@@ -56,12 +63,15 @@ public class GraphFrame extends JFrame{
 	private JCheckBox CheckBoxApprox;
 	private JCheckBox CheckBoxSpline;
 	private JCheckBox CheckBoxExtraPoly;
+	private JCheckBox CheckBoxLines;
+	private JCheckBox CheckBoxDisable;
 	private SpinnerModel model;
 	private JSpinner spinner;
-	private JTextField TextFieldFormulas;
 	private JScrollPane southScroll;
-	private JPanel Panel2;
-	private JPanel PanelGraphList;
+	private JPanel ListPanel;
+	private JPanel ButtonsPanel;
+	private JPanel CheckBoxPanel;
+	private JComboBox<String> ComboBox1;
 	
 
 	public static void setQuality(double x)
@@ -69,36 +79,43 @@ public class GraphFrame extends JFrame{
 		Paint.setQuality(x);
 	}
 	
-	public void DrawGraph(String s, double x0, double xn, Color c)
+	public void AddFunc(String s, double x0, double xn, Color c, String name)
 	{
-		Graph.DrawGraph(s, x0, xn, c);
+		Graph.FunctionList.add(new Pair<Function, Color>(new Function(s, x0, xn, Graph.paint), c));
+		//System.out.println(Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().size);
+		Graph.FunctionList.get(Graph.FunctionList.size() - 1);
+	   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().size, 1));
+		Graph.DotsList.setListData(Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().DotsArray.toArray());
+		ComboBox1.addItem(name);
+    	Graph.repaint();
 	}
 	
-	public void SetFunc(Function func)
+	public void AddFunc(Function f, Color c, String name)
 	{
-		Graph.func = func;
-		Graph.func.createDotsArray();
-		Graph.paint.SetFunc(func);
-	   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
-		Graph.DotsList.setListData(Graph.func.DotsArray.toArray());
+		Graph.FunctionList.add(new Pair<Function, Color>(f, c));
+		//System.out.println(Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().size);
+		Graph.FunctionList.get(Graph.FunctionList.size() - 1);
+	   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().size, 1));
+		Graph.DotsList.setListData(Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().DotsArray.toArray());
+		ComboBox1.addItem(name);
     	Graph.repaint();
 	}
-	public void SetDots(int _size, double[] _X, double[] _F)
+	public void AddFunc(int _size, double[] _X, double[] _F, Color c, String name)
 	{	
-		Function func = new Function(_size, _X, _F);
-		Graph.func = func;
-		Graph.func.createDotsArray();
-		//Graph.paint.SetFunc(func);
-	   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
+		Graph.FunctionList.add(new Pair<Function, Color>(new Function(_size, _X, _F), c));
+		Graph.FunctionList.get(Graph.FunctionList.size() - 1);
+	   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().size, 1));
+		Graph.DotsList.setListData(Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().DotsArray.toArray());
+		ComboBox1.addItem(name);
     	Graph.repaint();
 	}
-	public void SetDotsFromFile(File file)
+	public void AddFunc(File file, Color c, String name)
 	{
-		Function func = new Function(file);
-		Graph.func = func;
-		Graph.func.createDotsArray();
-		Graph.paint.SetFunc(func);
-	   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
+		Graph.FunctionList.add(new Pair<Function, Color>(new Function(file), c));
+		Graph.FunctionList.get(Graph.FunctionList.size() - 1);
+	   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().size, 1));
+		Graph.DotsList.setListData(Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().DotsArray.toArray());
+		ComboBox1.addItem(name);
     	Graph.repaint();
 	}
 	public void SetDrawPolynom(boolean f)
@@ -127,6 +144,7 @@ public class GraphFrame extends JFrame{
 	public void SetDrawLine(boolean f)
 	{
  	   Graph.boolDrawGraphLine = f;
+ 	   CheckBoxLines.setSelected(f);
 	}
 	public void saveScreen(String name)
 	{
@@ -146,34 +164,142 @@ public class GraphFrame extends JFrame{
 	   	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	//TPanel Panel1 = new TPanel();
     	setLocationRelativeTo(null); //open on center
-    	setLayout(new GridBagLayout());
     	setSize(width, height);
+
+    	//==================================================//
+    	//=============== Init components ==================//
+    	//==================================================//
+    	
     	Graph = new GraphPanel();
+    	Panel1 = new JPanel();
+	    model = new SpinnerNumberModel();
+        spinner = new JSpinner(model);
+    	ButtonOpen = new JButton("Открыть файл");
+    	ButtonApprox = new JButton("Аппроксимировать");
+    	ButtonGoToCenter = new  JButton("Центровать");
+    	ButtonSaveImage = new  JButton("Скриншот");
+    	CheckBoxLines = new JCheckBox("Линии");
+    	CheckBoxExtraPoly = new JCheckBox("Экстраполяция");
+    	CheckBoxPoly = new JCheckBox("Полином");
+    	CheckBoxApprox = new JCheckBox("Аппроксимация");
+    	CheckBoxSpline = new JCheckBox("Сплайн");
+    	CheckBox1 = new JCheckBox("Редактирование");
+    	ButtonsPanel = new JPanel();
+  		ButtonRemove = new JButton("Remove");
+  		CheckBoxDisable = new JCheckBox("Enable");
+  		CheckBoxPanel = new JPanel();
+  		ListPanel = new JPanel();
+  	    ComboBox1 = new JComboBox<String>();
+    	final JFileChooser fileopen = new JFileChooser(); 
+  		Graph.DotsList = new JList<Object>();
+  		Graph.DotsList.setLayoutOrientation(JList.VERTICAL);  
+  		southScroll = new JScrollPane(Graph.DotsList);
+
+    	//==================================================//
+    	//=============== Layouts ==========================//
+    	//==================================================//
+
+    	setLayout(new GridBagLayout());
+  		ListPanel.setLayout(new GridBagLayout());
+  		CheckBoxPanel.setLayout(new FlowLayout());
+    	ButtonsPanel.setLayout(new BoxLayout(ButtonsPanel, BoxLayout.Y_AXIS));
+    	
+    	//==================================================//
+    	//=============== Components fill ==================//
+    	//==================================================//
+
+    	//*************** Form fill **********************//
     	add(Graph, new 	GridBagConstraints(
     		0, 0, 1, 1, 1, 50, 
 			GridBagConstraints.NORTH, 
-			GridBagConstraints.CENTER, 
-			new Insets(100, 1, 1, 1), 
-			400, 
-			400));
+			GridBagConstraints.CENTER, new Insets(100, 1, 1, 1), 1, 90));
+    	add(Panel1, new GridBagConstraints(
+			1, 0, 1, 1, 1, 1, 
+			GridBagConstraints.NORTH, 
+			GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), -80, 1));
+    	
+    	//*************** Panel1 fill **********************//
+    	Panel1.add(ButtonsPanel);
+  		Panel1.add(CheckBoxPanel);
+  		Panel1.add(ListPanel);
+  		
+    	//*************** ButtonsPanel fill ****************//
+    	ButtonsPanel.add(ButtonOpen);
+    	ButtonsPanel.add(CheckBoxLines);
+    	ButtonsPanel.add(CheckBoxExtraPoly);
+    	ButtonsPanel.add(CheckBoxPoly);
+    	ButtonsPanel.add(CheckBoxApprox);
+    	ButtonsPanel.add(CheckBoxSpline);
+    	ButtonsPanel.add(CheckBox1);
+    	ButtonsPanel.add(ButtonGoToCenter);
+    	ButtonsPanel.add(ButtonSaveImage);
+    	ButtonsPanel.add(ButtonApprox);
+    	ButtonsPanel.add(spinner);
+    	
+    	//*************** CheckBoxPanel fill ***************//
+  		CheckBoxPanel.add(ComboBox1);
+  		CheckBoxPanel.add(CheckBoxDisable);
+  		CheckBoxPanel.add(ButtonRemove);  
+    	
+    	//==================================================//
+    	//=============== Aligments ========================//
+    	//==================================================//
+  		
+    	ButtonOpen.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	CheckBoxLines.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	CheckBoxExtraPoly.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	CheckBoxPoly.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	CheckBoxApprox.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	CheckBoxSpline.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	ButtonGoToCenter.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	ButtonSaveImage.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	ButtonApprox.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	spinner.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+    	//==================================================//
+    	//=============== Prefer Sizes =====================//
+    	//==================================================//
+
+  		Panel1.setPreferredSize(new Dimension(170, getHeight()));
+  		CheckBoxPanel.setPreferredSize(new Dimension(170, 60));
+  		ComboBox1.setPreferredSize(new Dimension(170, 25));
+  		ListPanel.setPreferredSize(new Dimension(170, getHeight() - ButtonsPanel.getHeight() - CheckBoxPanel.getHeight() - 20));
+  		
+    	//==================================================//
+        if ((Graph.func != null)&&(Graph.func.size >= 2))
+        	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
+        else
+        	spinner.setModel(new SpinnerNumberModel(0, 0, 0, 1));
+  		ButtonApprox.setEnabled(false);
+  		spinner.setEnabled(false);        
+  		//Panel1.add(southScroll);
+  		ComboBox1.setEditable(true);
+  		ButtonRemove.setText("X");
+
+    	//==================================================//
+    	//================== Listeners =====================//
+    	//==================================================//
+
+  	    GraphListener graphListener = new GraphListener(this);
     	addComponentListener(new ComponentListener() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-		  		Panel2.remove(southScroll);
-		  		Panel2.add(southScroll, new GridBagConstraints(
+		  		ListPanel.remove(southScroll);
+		  		ListPanel.add(southScroll, new GridBagConstraints(
 		  				1, 2, 1, 1, 1, 1, 
 		  				GridBagConstraints.EAST, 
-		  				GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 1, getSize().height - 220));
+		  				GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 1, getSize().height));
 		  		remove(Graph);
 				add(Graph, new 	GridBagConstraints(
 					0, 0, 1, 2, 1, 1, 
 					GridBagConstraints.NORTH, 
 					GridBagConstraints.CENTER, 
-					new Insets(1, 1, 40, 1), 
+					new Insets(1, 1, 1, 1), 
 					getSize().width, 
-					getSize().height - 50));    
+					getSize().height));    
 				Graph.paint.width = Graph.getSize().width;
 				Graph.paint.height = Graph.getSize().height; 
+		  		ListPanel.setPreferredSize(new Dimension(170, getHeight() - ButtonsPanel.getHeight() - CheckBoxPanel.getHeight() - 20));
 				Graph.repaint();
 			}
 			@Override
@@ -189,11 +315,11 @@ public class GraphFrame extends JFrame{
     	addWindowStateListener(new WindowStateListener() {
 			@Override
 			public void windowStateChanged(WindowEvent e) {
-		  		Panel2.remove(southScroll);
-		  		Panel2.add(southScroll, new GridBagConstraints(
+		  		ListPanel.remove(southScroll);
+		  		ListPanel.add(southScroll, new GridBagConstraints(
 		  				1, 2, 1, 1, 1, 1, 
 		  				GridBagConstraints.EAST, 
-		  				GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 1, getSize().height - 220));
+		  				GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 1, getSize().height));
 		  		remove(Graph);
 				add(Graph, new 	GridBagConstraints(
 					0, 0, 1, 2, 1, 1, 
@@ -204,82 +330,23 @@ public class GraphFrame extends JFrame{
 					getSize().height));   
 				Graph.paint.width = Graph.getSize().width;
 				Graph.paint.height = Graph.getSize().height; 
+		  		ListPanel.setPreferredSize(new Dimension(170, getHeight() - ButtonsPanel.getHeight() - CheckBoxPanel.getHeight() - 20));
 				Graph.repaint();
 			}
     	});
-    	setLocationRelativeTo(null); //open on center
-    	setLayout(new GridBagLayout());
-    	Panel1 = new JPanel();
-    	add(Panel1, new GridBagConstraints(
-			1, 0, 1, 1, 1, 1, 
-			GridBagConstraints.NORTH, 
-			GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 200, 0));
-    	TextFieldFormulas = new JTextField();
-    	add(TextFieldFormulas, new GridBagConstraints(
-			0, 0, 1, 1, 1, 1, 
-			GridBagConstraints.SOUTH, 
-			GridBagConstraints.HORIZONTAL, new Insets(40, 1, 1, 1), 0, 20));
-    	
-    	ButtonOpen = new JButton("Открыть файл");
-    	ButtonApprox = new JButton("Аппроксимировать");
-    	ButtonGoToCenter = new  JButton("Центровать");
-    	ButtonSaveImage = new  JButton("Скриншот");
-    	final JFileChooser fileopen = new JFileChooser(); 
-        // Сам слушатель:
-        ChangeListener listener = new ChangeListener() {
+        spinner.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
         		//JSpinner js = (JSpinner) e.getSource();
         	    //System.out.println("Введенное значение: " + js.getValue());
         	}
-        };
-    	// Конец слушателя 
-    
-        // Объявление модели JSpinner'а
-	    model = new SpinnerNumberModel();
-        //Объявление JSpinner'а, которого будем слушать
-        spinner = new JSpinner(model);
-        if (Graph.func.size >= 2)
-        	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
-        else
-        	spinner.setModel(new SpinnerNumberModel(0, 0, 0, 1));
-        spinner.addChangeListener(listener);
-    	Panel1.setLayout(new BoxLayout(Panel1, BoxLayout.Y_AXIS));
-    	Panel1.add(ButtonOpen);
-    	CheckBoxExtraPoly = new JCheckBox("Экстраполяция");
-    	Panel1.add(CheckBoxExtraPoly);
-    	CheckBoxPoly = new JCheckBox("Полином");
-    	Panel1.add(CheckBoxPoly);
-    	CheckBoxApprox = new JCheckBox("Аппроксимация");
-    	Panel1.add(CheckBoxApprox);
-    	CheckBoxSpline = new JCheckBox("Сплайн");
-    	Panel1.add(CheckBoxSpline);
-    	CheckBox1 = new JCheckBox("Редактирование");
-    	Panel1.add(CheckBox1);
-    	Panel1.add(ButtonGoToCenter);
-    	Panel1.add(ButtonSaveImage);
-    	Panel1.add(ButtonApprox);
-    	Panel1.add(spinner);
-  		ButtonApprox.setEnabled(false);
-  		spinner.setEnabled(false);
-  		Graph.DotsList = new JList<Object>();
-  		Graph.DotsList.setLayoutOrientation(JList.VERTICAL);          
-  		southScroll = new JScrollPane(Graph.DotsList);
-        southScroll.setPreferredSize(new Dimension(100, 100));
-  		southScroll.setSize(100, 300);
-  	    GraphListener graphListener = new GraphListener(this);
-  		Panel2 = new JPanel();
-  		Panel2.setLayout(new GridBagLayout());
-  		Panel2.add(southScroll, new GridBagConstraints(
-  				1, 2, 1, 1, 1, 1, 
-  				GridBagConstraints.EAST, 
-  				GridBagConstraints.HORIZONTAL, new Insets(1, 1, 1, 1), 1, getSize().height - 220));
-  		Panel1.add(Panel2);
+        });
     	ButtonOpen.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e){
 				int ret = fileopen.showDialog(null, "Открыть файл");              
  		   		if (ret == JFileChooser.APPROVE_OPTION) {
  		   			File file = fileopen.getSelectedFile();
+ 		   			/*
  		   			Graph.func = new Function(file);
  		   			Graph.paint.SetFunc(Graph.func);
  		   			if (Graph.func.GetPointsFlag) 
@@ -291,12 +358,14 @@ public class GraphFrame extends JFrame{
  		   			}
  		   			spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
             		Graph.repaint();
+ 		   			*/
+ 		   			AddFunc(file, null, file.getAbsoluteFile().toString());
+ 		   			ComboBox1.setSelectedIndex(Graph.FunctionList.size() - 1);
  		   		}
  		    }
     	});
     	ButtonApprox.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e){
-    			saveScreen("image.png");
     			if (Graph.func.GetPointsFlag)
     			{
   		  	    	if ((int) spinner.getValue() > 2)
@@ -343,7 +412,7 @@ public class GraphFrame extends JFrame{
   		    		Graph.boolDrawGraphPoly = true;
   		    	else
   		    		Graph.boolDrawGraphPoly = false;
-  		    	if (Graph.func.GetPointsFlag) Graph.func.interp.InitMatrix();
+  		    	//if (Graph.func.GetPointsFlag) Graph.func.interp.InitMatrix();
   		    	Graph.repaint();
   	       	}
      	});
@@ -355,9 +424,9 @@ public class GraphFrame extends JFrame{
   		    		Graph.boolDrawGraphExtraPoly = false;
   		    	if (Graph.func.GetPointsFlag) 
   		    	{
-  		    	   if (Graph.boolDrawGraphPoly) Graph.func.interp.InitMatrix();
-  		    	   if (Graph.boolDrawGraphApprox) Graph.func.approx.InitMatrix(Graph.func.nApprox);
-  		    	   if (Graph.boolDrawGraphSpline) Graph.func.spline.build_spline();
+  		    	   //if (Graph.boolDrawGraphPoly) Graph.func.interp.InitMatrix();
+  		    	   //if (Graph.boolDrawGraphApprox) Graph.func.approx.InitMatrix(Graph.func.nApprox);
+  		    	   //if (Graph.boolDrawGraphSpline) Graph.func.spline.build_spline();
   		    	}
   		    	Graph.repaint();
   	       	}
@@ -368,7 +437,16 @@ public class GraphFrame extends JFrame{
     				Graph.boolDrawGraphSpline = true;
  		    	else
  		    		Graph.boolDrawGraphSpline = false;
- 		    	if (Graph.func.GetPointsFlag) Graph.func.spline.build_spline();
+ 		    	//if (Graph.func.GetPointsFlag) Graph.func.spline.build_spline();
+ 		    	Graph.repaint();
+ 	       	}
+    	});
+    	CheckBoxLines.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e){
+    			if (CheckBoxLines.isSelected())
+    				Graph.boolDrawGraphLine = true;
+ 		    	else
+ 		    		Graph.boolDrawGraphLine = false;
  		    	Graph.repaint();
  	       	}
     	});
@@ -390,6 +468,85 @@ public class GraphFrame extends JFrame{
  		    	Graph.repaint();
  	      		}
     	});
+    	ComboBox1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Graph.selectedID = ComboBox1.getSelectedIndex();
+				if (Graph.selectedID != -1)
+					Graph.func = Graph.FunctionList.get(Graph.selectedID).getL();
+				else
+					return;
+				CheckBoxDisable.setSelected(Graph.func.Enable);
+			   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
+				Graph.DotsList.setListData(Graph.func.DotsArray.toArray());
+				Thread myThready = new Thread(new Runnable()
+				{
+					public void run() //Этот метод будет выполняться в побочном потоке
+					{
+						try {
+							for (int i = 0; i < 2000; i++)
+							{
+								Graph.boolDrawSelectedArea = true;
+								Graph.repaint();
+								Thread.sleep(1);
+							}
+							Graph.repaint();
+							Graph.boolDrawSelectedArea = false;
+							Graph.repaint();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
+				myThready.start();	//Запуск потока
+			}
+		});
+    	CheckBoxDisable.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (Graph.func != null)
+					Graph.func.Enable = CheckBoxDisable.isSelected();
+				if (Graph.selectedID != -1)
+					Graph.FunctionList.get(Graph.selectedID).getL().Enable = CheckBoxDisable.isSelected();
+				Graph.repaint();
+				
+			}
+		});
+    	/*
+    	ButtonRemove.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (Graph.selectedID == -1) return;
+				Graph.selectedID = ComboBox1.getSelectedIndex();
+				if (ComboBox1.getModel().getSize() != 1)
+				{
+					Graph.FunctionList.remove((Graph.selectedID<0)?0:Graph.selectedID);
+					System.out.println(ComboBox1.getModel().getSize());
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					ComboBox1.removeItemAt(Graph.selectedID);
+					
+				}
+				else
+				{
+					Graph.FunctionList.clear();
+					ComboBox1.removeAllItems();
+				}
+				Graph.selectedID = ComboBox1.getSelectedIndex();
+				ComboBox1.setSelectedIndex(Graph.selectedID);
+				//ComboBox1.setSelectedIndex(Graph.selectedID);
+				Graph.repaint();
+			}
+		});
+		*/
     	KeyListener tmpL = new KeyListener() {
 			
 			@Override
@@ -400,18 +557,24 @@ public class GraphFrame extends JFrame{
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
+				/*
 				try{
-					String str = "0";
-					Function tmpfunc;
-					if (TextFieldFormulas.getText() == "")
-						tmpfunc = new Function(str, Graph.paint);
-					else
-						tmpfunc = new Function(TextFieldFormulas.getText(), Graph.paint);
-					Graph.func = tmpfunc;
-			   		Graph.paint.SetFunc(Graph.func);
-			   		Graph.repaint();
+					if (e.getKeyCode() == KeyEvent.VK_ENTER)
+					{
+						Function tmpfunc;
+						if (TextFieldFormulas.getText() == "")
+							tmpfunc = new Function("0", Graph.paint);
+						else
+							tmpfunc = new Function(TextFieldFormulas.getText(), Graph.paint);
+						AddFunc(tmpfunc, null, TextFieldFormulas.getText());
+						//Graph.func = tmpfunc;
+				   		//Graph.paint.SetFunc(Graph.func);
+				   		//Graph.repaint();
+					}
 				} catch (Exception e1) {
+					System.err.println("Функция не определена!");
 				}
+				*/
 			}
 			
 			@Override
@@ -420,7 +583,7 @@ public class GraphFrame extends JFrame{
 		};
   		Graph.addKeyListener(graphListener);
   		Panel1.addKeyListener(graphListener);
-  		Panel2.addKeyListener(graphListener);
+  		ListPanel.addKeyListener(graphListener);
   		CheckBox1.addKeyListener(graphListener);
   		CheckBoxApprox.addKeyListener(graphListener);
   		CheckBoxExtraPoly.addKeyListener(graphListener);
@@ -432,8 +595,7 @@ public class GraphFrame extends JFrame{
   		ButtonGoToCenter.addKeyListener(graphListener);
   		southScroll.addKeyListener(graphListener);
   		Graph.DotsList.addKeyListener(graphListener);
-  		TextFieldFormulas.addKeyListener(graphListener);
-  		TextFieldFormulas.addKeyListener(tmpL);
+  		ComboBox1.addKeyListener(graphListener);
     	Graph.repaint();
     	setVisible(true);
     }

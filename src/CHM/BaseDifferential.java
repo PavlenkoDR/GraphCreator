@@ -1,5 +1,7 @@
+
 package CHM;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,20 +12,23 @@ import Graph.Function;
 import Graph.GraphFrame;
 import MathPars.MatchParser;
 
-public class RungeKutta {
-	private MatchParser p = new MatchParser();
-	private double leftX, rightX, h, y0;
-	private String func;
-	private double[][] XY;
-	public int size = 0;
+
+public class BaseDifferential {
+	protected MatchParser p = new MatchParser();
+	protected double leftX, rightX, h, y0;
+	protected String func;
+	protected double[][] XY;
+	protected int size = 0;
 
 	public double[] getX() {return XY[0];}
 	public double[] getY() {return XY[1];}
+	public int getSize()   {return size;}
 	
-	public RungeKutta(String _func, double _leftX, double _rightX, double _h, double _y0) {
+	private BaseDifferential(){}
+	protected BaseDifferential(String _func, double _leftX, double _rightX, double n, double _y0) {
     	leftX = _leftX;
     	rightX = _rightX;
-    	h = _h;
+    	h = (leftX - rightX)/n;
     	y0 = _y0;
     	func = _func;
     	try {
@@ -37,14 +42,14 @@ public class RungeKutta {
     	//p.Parse(func);
 	}
 
-    public static double GetRound(double x, int n)
+	protected static double GetRound(double x, int n)
     {
     	if (n < 0)
     		return x;
     	return new BigDecimal(x).setScale(n, RoundingMode.FLOOR).doubleValue();
     }
     
-	private double function(double x, double y)
+    protected double function(double x, double y)
 	{
     	p.setVariable("x", x);
     	//p.setVariable("y", y);
@@ -59,27 +64,7 @@ public class RungeKutta {
 
 	public double[][] getSolve() throws Exception
 	{
-		if ((leftX > rightX)||(h <= 0)) throw new Exception("incorrect input data");
-		double [][] xy = new double [2][(int)Math.abs((rightX - leftX)/h + h)];
-		int k = 1;
-		xy[0][0] = leftX;
-		xy[1][0] = y0;
-		double k1, k2, k3, k4, deltay;
-		for (double i = leftX + h; i <= rightX; i += h)
-		{
-			if (k > (rightX - leftX)/h + h - 1) break;
-			xy[0][k] = i;
-			k1 = function(xy[0][k-1], xy[1][k-1]);
-			k2 = function(xy[0][k-1] + h/2, xy[1][k-1] + h*k1/2);
-			k3 = function(xy[0][k-1] + h/2, xy[1][k-1] + h*k2/2);
-			k4 = function(xy[0][k-1] + h, xy[1][k-1] + h*k3);
-			deltay = h*(k1+ 2*k2 + 2*k3 + k4)/6;
-			xy[1][k] = xy[1][k-1] + deltay;
-			k++;
-		}
-		System.out.println();
-		return xy;
-		
+		return null;
 	}
 
 	public void printSolve(int dec_count)
@@ -90,19 +75,11 @@ public class RungeKutta {
 		}
 	}
 
-	public GraphFrame paintSolve(double c)
+	public void paintSolve(double c, GraphFrame frame)
 	{
-    	GraphFrame frame = new GraphFrame("Frame", 800, 600);
-    	//frame.SetDrawExtraPoly(true);
-    	frame.SetDrawLine(true);
-    	frame.requestFocusInWindow();
-    	double Y[] = new double[size];
     	for (int i = 0; i < size; i++)
-    		Y[i] = -XY[1][i] - c;
-    	frame.setSize(800, 600);
-    	frame.SetFunc(new Function(XY[0].length, XY[0], Y));
-    	GraphFrame.setQuality(10);
-    	return frame;
+    		XY[1][i] = XY[1][i] - c;
+    	frame.AddFunc(new Function(XY[0].length, XY[0], XY[1]), new Color(122, 255, 0), "Euler");
 	}
 	
 	public double[] getError(String s)
@@ -116,25 +93,22 @@ public class RungeKutta {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("<RungeKutta Errors>");
 		for (int i = 0; i < size; i++)
 		{
 			p.setVariable("x", XY[0][i]);
 			try {
-				err[i] = -Math.abs(Math.abs(p.Parse(s) - XY[1][i]) - C);
-				System.out.println(XY[0][i] + " " + err[i]);
+				err[i] = - p.Parse(s) + XY[1][i] + C;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		System.out.println("</RungeKutta Errors>");
 		return err;
 	}
 
-	public void exportSolve(int dec_count)
+	protected void exportSolve(int dec_count, String name)
 	{
-		File file = new File("RungeKuttaExport.txt");
+		File file = new File(name);
 		FileWriter fout;
 		try {
 			fout = new FileWriter(file);
@@ -149,5 +123,5 @@ public class RungeKutta {
 			e.printStackTrace();
 		}
 	}
-
+	
 }

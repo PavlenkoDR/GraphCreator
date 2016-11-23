@@ -1,7 +1,7 @@
 package CHM;
 
-public class EulersMethod extends BaseDifferential{
-	public EulersMethod(String _func, double _leftX, double _rightX, double _h, double _y0) {
+public class ImproveEulersMethod extends BaseDifferential{
+	public ImproveEulersMethod(String _func, double _leftX, double _rightX, double _h, double _y0) {
 		super(_func, _leftX, _rightX, _h, _y0);
 	}
 	@Override
@@ -15,13 +15,13 @@ public class EulersMethod extends BaseDifferential{
 		for (double i = leftX + h; i <= rightX; i += h)
 		{
 			xy[0][k] = i;
-			xy[1][k] = xy[1][k-1] + h*function(xy[0][k-1], xy[1][k-1]);
+			xy[1][k] = xy[1][k-1] + h*function(xy[0][k-1] + h/2, xy[1][k-1] + h/2*function(xy[0][k-1], xy[1][k-1]));
 			k++;
 		}
 		return xy;
 	}
 	public void exportSolve(int dec_count)
 	{
-		exportSolve(dec_count, "EulersMethod.txt");
+		exportSolve(dec_count, "ImproveEulersMethod.txt");
 	}
 }
