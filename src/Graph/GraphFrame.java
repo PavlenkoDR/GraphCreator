@@ -166,7 +166,6 @@ public class GraphFrame extends JFrame{
     	super(name);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
-	   	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	//TPanel Panel1 = new TPanel();
     	setLocationRelativeTo(null); //open on center
     	setSize(width, height);

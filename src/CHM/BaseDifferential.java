@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 
 import ChmFunctions.Function;
 import Graph.GraphFrame;
+import Graph.Paint;
 import MathPars.MatchParser;
 
 
@@ -28,7 +29,7 @@ public class BaseDifferential {
 	protected BaseDifferential(String _func, double _leftX, double _rightX, double n, double _y0) {
     	leftX = _leftX;
     	rightX = _rightX;
-    	h = (rightX - leftX)/n;
+    	h = (rightX - leftX)/(n-1);
     	y0 = _y0;
     	func = _func;
     	try {
@@ -49,8 +50,8 @@ public class BaseDifferential {
     	kol_x = _kol_x;
     	kol_y = _kol_y;
     	y0 = _y0;
-    	h = (rightX - leftX)/kol_x;
-    	tao = (y0 - leftX)/kol_y;
+    	h = (rightX - leftX)/(kol_x-1);
+    	tao = (y0 - leftX)/(kol_y-1);
     	func = _func;
     	try {
 			XY = getSolve();
@@ -74,21 +75,73 @@ public class BaseDifferential {
     {
     	if (n < 0)
     		return x;
-    	return new BigDecimal(x).setScale(n, RoundingMode.FLOOR).doubleValue();
+    	double ans = 0;
+    	try
+    	{
+    		ans = new BigDecimal(x).setScale(n, RoundingMode.FLOOR).doubleValue();
+    	}
+    	catch(Exception e)
+    	{
+    		ans = 0;
+    	}
+    	return ans;
     }
     
     protected double function(double x, double y)
 	{
+    	//*
     	p.setVariable("x", x);
     	p.setVariable("y", y);
 		try {
+			//System.out.println(func);
 			return p.Parse(func);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return 0;
+		//*/
+    	//return sin(x)-2*y;
 	}
+    
+    public static double functionAnswer(double x)
+	{
+        //c_1 e^(-2 x) + (2 sin(x))/5 - (cos(x))/5
+    	return Math.pow(Math.E, -2*x)+2*Math.sin(x)/5-Math.cos(x)/5;
+    	//return Math.pow(Math.E, (Math.sin(x))) - 2 - 2*Math.sin(x);
+	}
+    
+    public void exportFunctionAnswer(int dec_count)
+    {
+		File file = new File("Answer.txt");
+		FileWriter fout;
+		try {
+			fout = new FileWriter(file);
+			fout.write(kol_x + "\n");
+			for (double i = leftX; i < rightX; i+=h)
+			{
+				fout.write(i + " " + functionAnswer(i) + "\n");
+			}
+			fout.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public static double [][]returnfunctionAnswer(double left, double right, int n, GraphFrame frame)
+    {
+    	double tmp[][] = new double[2][n];
+    	for (int i = 0; i < n; i++)
+    	{
+    		System.out.print(left + (double)i*(right-left)/(double)n);
+    		System.out.print(" ");
+    		System.out.println(functionAnswer(left + ((double)i)*(right-left)/((double)n)));
+    		tmp[0][i] = (left + ((double)i)*(right-left)/((double)n));
+    		tmp[1][i] = -(functionAnswer(left + (double)i*(right-left)/(double)n));
+    	}
+    	return tmp;
+    }
     
     protected double df(double x, double y)
 	{
@@ -150,6 +203,17 @@ public class BaseDifferential {
 		}
 		return err;
 	}
+	
+	public double[] getError()
+	{
+		double err[] = new double[XY[1].length];
+		double C = Math.abs(functionAnswer(XY[0][0]) - XY[1][0]);
+		for (int i = 0; i < size; i++)
+		{
+			err[i] = -functionAnswer(XY[0][i]) + XY[1][i] + C;
+		}
+		return err;
+	}
 	public double getAverageError(String s)
 	{
 		double err[] = getError(s);
@@ -175,6 +239,15 @@ public class BaseDifferential {
 	public void paintError(String func, double scale, GraphFrame frame, String name, Color color)
 	{
 		double Y[] = getError(func);
+    	for (int i = 0; i < size; i++)
+    		Y[i] *= scale;
+    	Function errfunc = new Function(size, XY[0], Y);
+    	frame.AddFunc(errfunc, color, name);
+	}
+
+	public void paintError(double scale, GraphFrame frame, String name, Color color)
+	{
+		double Y[] = getError();
     	for (int i = 0; i < size; i++)
     		Y[i] *= scale;
     	Function errfunc = new Function(size, XY[0], Y);

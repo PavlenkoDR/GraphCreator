@@ -37,17 +37,24 @@ public class Interp {
 	}
 	public void InitMatrix()
 	{
+		/*
 		for (int i = 0; i < size - 1; i++)
 		{
 			for (int j = i + 1; j < size; j++)
 			{
 				if (X[i] == X[j])
 				{
-					System.out.println("Error: X[" + i + "] == X[" + j + "]");
-					System.exit(0);
+					//System.out.println("Error: X[" + i + "] == X[" + j + "]");
+					try {
+						throw new Exception("Error: X[" + i + "] == X[" + j + "]");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		}
+		*/
 		double tmp;
 		for (int i = 0; i < size; i++)
 		{

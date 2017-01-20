@@ -42,6 +42,16 @@ public class ExplicitDfference extends BaseDifferential{
 		return tmp;
 	}
 	
+	private double phi(double x)
+	{
+	  return function(x, 0);
+	}
+	
+	private double psi(double t)
+	{
+	  return function(0, t);
+	}
+	
 	public double[][] getSolve() throws Exception
 	{
 		if ((leftX > rightX)||(h <= 0)) throw new Exception("incorrect input data");
@@ -62,41 +72,23 @@ public class ExplicitDfference extends BaseDifferential{
 			T[k] = i;
 			k++;
 		}
+
 		U = new double[kol_y][kol_x];
 		for (int j = 0; j < kol_y; j++)
 			for (int i = 0; i < kol_x; i++)
 				U[j][i] = 0;
-		/*
 		for (int i = 0; i < kol_x; i++)
-		     U[0][i] = df(X[i], 0);
-		*/
-		for (int j = 0; j < kol_y - 1; j++)
 		{
-			for (int i = 0; i < kol_x-1; i++)
-			{
-				U[j+1][i+1] = tao*(function(X[i], T[j]) - (U[j][i+1] - U[j][i])/h) + U[j][i+1];
-			}
-			/*
-			for (int i = 1; i < kol_x; i++)
-			{
-				U[j+1][i] = tao*(function(X[i], T[j]) - (U[j][i] - U[j][i-1])/h) + U[j][i];
-			}
-			*/
+			U[0][i] = phi(X[i]);
 		}
-		//XY[0] = X;
-		//XY[1] = T;
-		
-		/*
-		for (int j = 0; j < kol_y; j++)
+		for (int i = 0; i < kol_y; i++)
 		{
-			for (int i = 0; i < kol_x; i++)
-			{
-				System.out.print(GetRound(U[i][j], 1) + " ");
-			}
-			System.out.println();
-			System.out.println();
+			U[i][0] = psi(T[i]);
 		}
-		*/
+		for (int i = 0; i < kol_x - 1; i++)
+			for (int j = 1; j < kol_y; j++)
+				U[j][i+1] = h*(function(X[i], T[j]) - (U[j][i] - U[j-1][i])/tao) + U[j][i];
+
 		return U;
 	}
 	
@@ -112,7 +104,7 @@ public class ExplicitDfference extends BaseDifferential{
 		FileWriter fout;
 		try {
 			fout = new FileWriter(file);
-			fout.write(XY[0].length + "\n");
+			fout.write(U.length + "\n");
 			for (int i = 0; i < U.length; i++)
 			{
 				for (int j = 0; j < U[0].length; j++)
@@ -127,4 +119,5 @@ public class ExplicitDfference extends BaseDifferential{
 			e.printStackTrace();
 		}
 	}
+	
 }
