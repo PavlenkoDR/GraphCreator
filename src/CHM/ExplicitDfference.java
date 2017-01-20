@@ -1,9 +1,12 @@
 package CHM;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import ChmFunctions.Function;
+import Graph.GraphFrame;
 import MathPars.MatchParser;
 
 public class ExplicitDfference extends BaseDifferential{
@@ -118,6 +121,39 @@ public class ExplicitDfference extends BaseDifferential{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	@Override
+	public double[] getError(String s)
+	{
+		double err[] = new double[U[0].length];
+		p.setVariable("x", X[0]);
+		double C = 0;
+		try {
+			C = Math.abs(p.Parse(s) - U[U.length-1][0]);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		for (int i = 0; i < size; i++)
+		{
+			p.setVariable("x", X[i]);
+			try {
+				err[i] = -p.Parse(s) + U[U.length-1][i] + C;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return err;
+	}
+	@Override
+	public void paintError(String func, double scale, GraphFrame frame, String name, Color color)
+	{
+		double Y[] = this.getError(func);
+    	for (int i = 0; i < size; i++)
+    		Y[i] *= scale;
+    	Function errfunc = new Function(size, X, Y);
+    	frame.AddFunc(errfunc, color, name);
 	}
 	
 }
