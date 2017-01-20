@@ -1,4 +1,4 @@
-package Graph;
+package ChmFunctions;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 

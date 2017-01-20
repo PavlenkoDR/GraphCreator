@@ -18,6 +18,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import Another.Pair;
+import ChmFunctions.Function;
 import MathPars.MatchParser;
 
 //Window Builder
@@ -56,6 +57,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	private MatchParser p = new MatchParser();
 	boolean allocation;
 	boolean screenRun;
+	int[] selectedList;
 	
 	int ActiveKey;
 	
@@ -75,7 +77,6 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	    paint(gNow);
 		return imgResult;
 	}
-	
 	public void paint(Graphics g) {
 		super.paint(g);
 		//paint = new Paint((getSize().width > 50)? (getSize().width):50, (getSize().height > 50)? (getSize().height):50);
@@ -166,6 +167,13 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
   	  		}
   		}
 	  	g.setColor(Color.RED);
+	  	if (func != null)
+	  	if (func.GetPointsFlag)
+	  	{
+	        selectedList = DotsList.getSelectedIndices();
+	        for (int i = 0; i < selectedList.length; i++)
+	        	g.drawOval(paint.CoordToPixelX(func.X[selectedList[i]]) - 2, paint.CoordToPixelY(func.Y[selectedList[i]]) - 2, 4, 4);
+	  	}
 		if (allocation) g.drawRect(
 				(int)((MouseXLast < MouseXNow)?MouseXLast:MouseXNow), 
 				(int)((MouseYLast < MouseYNow)?MouseYLast:MouseYNow), 

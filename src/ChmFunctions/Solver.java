@@ -1,4 +1,4 @@
-package Graph;
+package ChmFunctions;
 import java.util.Scanner;
 
 public class Solver {

@@ -1,4 +1,4 @@
-package Graph;
+package ChmFunctions;
 import java.io.File;
 
 public class Approx extends BasePoly{

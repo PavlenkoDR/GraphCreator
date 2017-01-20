@@ -6,13 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import CHM.AdamsaMethod4;
-import CHM.EulersMethod;
-import CHM.ImproveEulersMethod;
-import CHM.RungeKutta4;
-import Graph.Function;
+import org.w3c.dom.css.RGBColor;
+
+import CHM.*;
+import ChmFunctions.Function;
 import Graph.GraphFrame;
-import MathPars.MatchParser;
 
 
 public class Main {
@@ -22,25 +20,87 @@ public class Main {
     public static void main(String[] args){
     	long last_time = System.currentTimeMillis();
     	GraphFrame frame;
-    	GraphFrame frame1 = new GraphFrame("Frame", 800, 600);
+    	//GraphFrame frame1 = new GraphFrame("Frame", 800, 600);
     	frame = new GraphFrame("Frame", 800, 600);
-    	frame.SetDrawSpline(true);
+    	frame.SetDrawLine(true);
     	frame.requestFocusInWindow();
     	frame.setSize(800, 600);
-    	AdamsaMethod4 euler = new AdamsaMethod4("sin(x)", -Math.PI, Math.PI, 0.1, 0);
-    	//euler.printSolve(5);
-    	//euler.exportSolve(5);
-    	euler.paintSolve(1.55, frame);
-    	frame.AddFunc("0-cos(x)", -10, 10, Color.BLUE, "-cos(x)");
-    	Function errfunc = new Function(euler.getSize(), euler.getX(), euler.getError("0-cos(x)"));
-    	frame.AddFunc(errfunc, Color.RED, "Error");
-    	for (int i = 0; i < errfunc.size; i++)
+    	
+    	/*
+    	//==================================== EulersMethod ====================================
+    	EulersMethod euler = new EulersMethod("sin(x)", -Math.PI, Math.PI, 40, 0);
+    	euler.paintSolve(0, frame, "EulersMethod", Color.GREEN);
+    	euler.paintError("0-cos(x)", 1, frame, "EEM", Color.RED);
+    	euler.paintError("0-cos(x)", 10, frame, "ESEM", Color.RED);
+    	
+    	//*/
+    	/*
+    	
+    	//==================================== ImproveEulersMethod ====================================
+    	ImproveEulersMethod ieuler = new ImproveEulersMethod("sin(x)", -Math.PI, Math.PI, 40, 0);
+    	ieuler.paintSolve(0, frame, "ImproveEulersMethod", Color.GREEN);
+    	ieuler.paintError("0-cos(x)", 1, frame, "ErrorImproveEulersMethod", Color.RED);
+    	ieuler.paintError("0-cos(x)", 2000, frame, "ErrorScaleImproveEulersMethod", Color.RED);
+    	
+    	//*/
+    	/*
+    	
+    	//==================================== AdamsaMethod4 ====================================
+    	AdamsaMethod4 adam4 = new AdamsaMethod4("sin(x)", -Math.PI, Math.PI, 40, 0);
+    	adam4.paintSolve(0, frame, "AdamsaMethod4", Color.GREEN);
+    	adam4.paintError("0-cos(x)", 1, frame, "ErrorAdamsaMethod4", Color.RED);
+    	adam4.paintError("0-cos(x)", 10000, frame, "ErrorScaleAdamsaMethod4", Color.RED);
+    	
+		//*/
+    	///*
+    	
+    	//==================================== RungeKutta4 ====================================
+    	RungeKutta4 rung4 = new RungeKutta4("sin(x)", -Math.PI, Math.PI, 40, 0);
+    	rung4.paintSolve(0, frame, "RungeKutta4", Color.GREEN);
+    	rung4.paintError("0-cos(x)", 1, frame, "ErrorRungeKutta4", Color.RED);
+    	rung4.paintError("0-cos(x)", 10000000, frame, "ErrorScaleRungeKutta4", Color.RED);
+    	//System.out.println(rung4.getAverageError("0-cos(x)"));
+    	
+
+    	//==================================== ExplicitDfference ==============================
+    	ExplicitDfference test = new ExplicitDfference("x*x", -10, 10, 0, 100, 2000);
+    	test.exportSolve(4);
+    	GraphFrame frame1;
+    	//GraphFrame frame1 = new GraphFrame("Frame", 800, 600);
+    	frame1 = new GraphFrame("Frame", 800, 600);
+    	frame1.SetDrawLine(true);
+    	frame1.requestFocusInWindow();
+    	frame1.setSize(800, 600);
+    	frame1.AddFunc(new Function(test.getSize(), test.getX(), 
+				Function.returnInvers(test.getU()[test.getU().length - 1])), 
+				new Color((int)(256*Math.random()), 
+				(int)(256*Math.random()), 
+				(int)(256*Math.random())), 
+				"level max");
+    	frame1.AddFunc(new Function(test.getSize(), test.getX(), 
+				Function.returnInvers(test.getAverageU())), 
+				new Color((int)(256*Math.random()), 
+				(int)(256*Math.random()), 
+				(int)(256*Math.random())), 
+				"average max");
+    	frame1.AddFunc("x*x*x/3", -10, 10, Color.BLUE, "-cos(x)");
+    	//test.paintError("0-cos(x)", 1, frame1, "ErrorRungeKutta4", Color.RED);
+    	//*
+    	for (int i = 0; i < test.getU().length; i++)
     	{
-    		errfunc.Y[i] *= 10000000;
-    		System.out.println(errfunc.Y[i]);
+    		if (i % 250 == 0)
+    			frame1.AddFunc(new Function(test.getSize(), test.getX(), 
+    					Function.returnInvers(test.getU()[i])), 
+    					new Color((int)(256*Math.random()), 
+    					(int)(256*Math.random()), 
+    					(int)(256*Math.random())), 
+    					"level " + i);
+    		//System.out.println(i);
     	}
-    	errfunc = new Function(errfunc.size, errfunc.X, errfunc.Y);
-    	frame.AddFunc(errfunc, Color.RED, "Error*10000");
+    	//*/
+    	
+    	frame.AddFunc("0-cos(x)", -10, 10, Color.BLUE, "-cos(x)");
+    	//frame.AddFunc("sin(x)", -10, 10, Color.CYAN, "sin(x)");
     	new Main();
     	System.out.println("Done! " + (System.currentTimeMillis() - last_time));
     }

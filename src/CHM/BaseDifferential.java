@@ -8,17 +8,17 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import Graph.Function;
+import ChmFunctions.Function;
 import Graph.GraphFrame;
 import MathPars.MatchParser;
 
 
 public class BaseDifferential {
 	protected MatchParser p = new MatchParser();
-	protected double leftX, rightX, h, y0;
+	protected double leftX, rightX, h, y0, tao;
 	protected String func;
 	protected double[][] XY;
-	protected int size = 0;
+	protected int size = 0, kol_x, kol_y;
 
 	public double[] getX() {return XY[0];}
 	public double[] getY() {return XY[1];}
@@ -28,7 +28,7 @@ public class BaseDifferential {
 	protected BaseDifferential(String _func, double _leftX, double _rightX, double n, double _y0) {
     	leftX = _leftX;
     	rightX = _rightX;
-    	h = (leftX - rightX)/n;
+    	h = (rightX - leftX)/n;
     	y0 = _y0;
     	func = _func;
     	try {
@@ -36,10 +36,38 @@ public class BaseDifferential {
 			size = XY[0].length;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			System.err.println("left: " + leftX);
+			System.err.println("right: " + rightX);
+			System.err.println("h: " + h);
+			System.err.println("Log:");
 			e.printStackTrace();
 		}
-    	//p.setVariable("x", (double)i);
-    	//p.Parse(func);
+	}
+	protected BaseDifferential(String _func, double _leftX, double _rightX, double _y0, int _kol_x, int _kol_y) {
+    	leftX = _leftX;
+    	rightX = _rightX;
+    	kol_x = _kol_x;
+    	kol_y = _kol_y;
+    	y0 = _y0;
+    	h = (rightX - leftX)/kol_x;
+    	tao = (y0 - leftX)/kol_y;
+    	func = _func;
+    	try {
+			XY = getSolve();
+			size = XY[0].length;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.err.println("left: " + leftX);
+			System.err.println("right: " + rightX);
+			System.err.println("y0: " + y0);
+			System.err.println("kol_x: " + kol_x);
+			System.err.println("kol_y: " + kol_y);
+			System.err.println("(y0 - leftX)/tao: " + (y0 - leftX)/tao);
+			System.err.println("h: " + h);
+			System.err.println("tao: " + tao);
+			System.err.println("Log:");
+			e.printStackTrace();
+		}
 	}
 
 	protected static double GetRound(double x, int n)
@@ -52,9 +80,25 @@ public class BaseDifferential {
     protected double function(double x, double y)
 	{
     	p.setVariable("x", x);
-    	//p.setVariable("y", y);
+    	p.setVariable("y", y);
 		try {
 			return p.Parse(func);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+	}
+    
+    protected double df(double x, double y)
+	{
+    	double delta = 0.0001;
+    	p.setVariable("x", x + delta);
+    	p.setVariable("y", y);
+		try {
+			double deltaX = p.Parse(func);
+	    	p.setVariable("x", x);
+			return ((deltaX - p.Parse(func))/delta);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -75,11 +119,12 @@ public class BaseDifferential {
 		}
 	}
 
-	public void paintSolve(double c, GraphFrame frame)
+	public void paintSolve(double c, GraphFrame frame, String name, Color color)
 	{
+		double Y[] = new double[XY[0].length];
     	for (int i = 0; i < size; i++)
-    		XY[1][i] = XY[1][i] - c;
-    	frame.AddFunc(new Function(XY[0].length, XY[0], XY[1]), new Color(122, 255, 0), "Euler");
+    		Y[i] = -XY[1][i] - c;
+    	frame.AddFunc(new Function(XY[0].length, XY[0], Y), color, name);
 	}
 	
 	public double[] getError(String s)
@@ -97,13 +142,43 @@ public class BaseDifferential {
 		{
 			p.setVariable("x", XY[0][i]);
 			try {
-				err[i] = - p.Parse(s) + XY[1][i] + C;
+				err[i] = -p.Parse(s) + XY[1][i] + C;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return err;
+	}
+	public double getAverageError(String s)
+	{
+		double err[] = getError(s);
+		double sumErr = 0;
+		double sumSolve = 0;
+		int k = 0;
+		try {
+			for (double i = leftX; i <= rightX; i+=h)
+			{
+				p.setVariable("x", i);
+				sumErr += Math.abs(err[k]);
+				sumSolve += Math.abs(p.Parse(s));
+				k++;
+				if (k == err.length) break;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sumErr/sumSolve*100;
+	}
+
+	public void paintError(String func, double scale, GraphFrame frame, String name, Color color)
+	{
+		double Y[] = getError(func);
+    	for (int i = 0; i < size; i++)
+    		Y[i] *= scale;
+    	Function errfunc = new Function(size, XY[0], Y);
+    	frame.AddFunc(errfunc, color, name);
 	}
 
 	protected void exportSolve(int dec_count, String name)

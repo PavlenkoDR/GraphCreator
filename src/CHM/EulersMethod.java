@@ -1,8 +1,8 @@
 package CHM;
 
 public class EulersMethod extends BaseDifferential{
-	public EulersMethod(String _func, double _leftX, double _rightX, double _h, double _y0) {
-		super(_func, _leftX, _rightX, _h, _y0);
+	public EulersMethod(String _func, double _leftX, double _rightX, double n, double _y0) {
+		super(_func, _leftX, _rightX, n, _y0);
 	}
 	@Override
 	public double[][] getSolve() throws Exception
@@ -18,6 +18,8 @@ public class EulersMethod extends BaseDifferential{
 			xy[1][k] = xy[1][k-1] + h*function(xy[0][k-1], xy[1][k-1]);
 			k++;
 		}
+		if (k < xy[1].length)
+			xy[1][k] = xy[1][k-1] + h*function(xy[0][k-1], xy[1][k-1]);
 		return xy;
 	}
 	public void exportSolve(int dec_count)

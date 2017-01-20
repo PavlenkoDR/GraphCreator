@@ -1,8 +1,8 @@
 package CHM;
 
 public class ImproveEulersMethod extends BaseDifferential{
-	public ImproveEulersMethod(String _func, double _leftX, double _rightX, double _h, double _y0) {
-		super(_func, _leftX, _rightX, _h, _y0);
+	public ImproveEulersMethod(String _func, double _leftX, double _rightX, double n, double _y0) {
+		super(_func, _leftX, _rightX, n, _y0);
 	}
 	@Override
 	public double[][] getSolve() throws Exception

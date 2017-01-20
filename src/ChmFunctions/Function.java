@@ -1,4 +1,4 @@
-package Graph;
+package ChmFunctions;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,12 +11,13 @@ import java.util.Scanner;
 
 import javax.swing.JList;
 
+import Graph.Paint;
 import MathPars.MatchParser;
 
 
 public class Function {
 	
-	private double [] returnInvers(final double [] in)
+	public static double [] returnInvers(final double [] in)
 	{
 		double tmp[] = new double[in.length];
 		for (int i = 0; i < in.length; i++)
@@ -32,11 +33,11 @@ public class Function {
 	public InterpMatrix interp;
 	public Approx approx;
 	public Spline spline;
-    int nApprox = 2;
+	public int nApprox = 2;
 	public boolean GetPointsFlag = false;
 	public boolean Enable = true;
-	double minY, maxY;
-	List<String> DotsArray;
+	public double minY, maxY;
+	public List<String> DotsArray;
 	
 	String func;
 

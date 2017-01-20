@@ -1,4 +1,4 @@
-package Graph;
+package ChmFunctions;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;

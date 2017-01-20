@@ -2,6 +2,8 @@ package Graph;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import ChmFunctions.Function;
+
 
 public class Paint {
 	public double BorderMin = -20;

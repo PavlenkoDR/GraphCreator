@@ -16,6 +16,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
@@ -43,6 +45,7 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JComboBox;
 import Another.Pair;
+import ChmFunctions.Function;
 
 import MathPars.MatchParser;
 
@@ -87,6 +90,8 @@ public class GraphFrame extends JFrame{
 	   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().size, 1));
 		Graph.DotsList.setListData(Graph.FunctionList.get(Graph.FunctionList.size() - 1).getL().DotsArray.toArray());
 		ComboBox1.addItem(name);
+		Graph.selectedID = ComboBox1.getModel().getSize() - 1;
+		ComboBox1.setSelectedIndex(Graph.selectedID);
     	Graph.repaint();
 	}
 	
@@ -480,6 +485,7 @@ public class GraphFrame extends JFrame{
 				CheckBoxDisable.setSelected(Graph.func.Enable);
 			   	spinner.setModel(new SpinnerNumberModel(2, 2, Graph.func.size, 1));
 				Graph.DotsList.setListData(Graph.func.DotsArray.toArray());
+				//Graph.func = Graph.FunctionList.get(Graph.selectedID).getL();
 				Thread myThready = new Thread(new Runnable()
 				{
 					public void run() //Этот метод будет выполняться в побочном потоке
@@ -547,6 +553,11 @@ public class GraphFrame extends JFrame{
 			}
 		});
 		*/
+    	Graph.DotsList.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent evt) {
+    			Graph.repaint();
+    		}
+		});
     	KeyListener tmpL = new KeyListener() {
 			
 			@Override
@@ -597,6 +608,7 @@ public class GraphFrame extends JFrame{
   		Graph.DotsList.addKeyListener(graphListener);
   		ComboBox1.addKeyListener(graphListener);
     	Graph.repaint();
+		ComboBox1.setSelectedIndex(ComboBox1.getModel().getSize() - 1);
     	setVisible(true);
     }
 }
