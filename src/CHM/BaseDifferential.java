@@ -15,6 +15,9 @@ import MathPars.MatchParser;
 
 
 public class BaseDifferential {
+	public interface FunctionProvider {
+		public double function(double x);
+	}
 	protected MatchParser p = new MatchParser();
 	protected double leftX, rightX, h, y0, tao;
 	protected String func;
@@ -104,14 +107,7 @@ public class BaseDifferential {
     	//return sin(x)-2*y;
 	}
     
-    public static double functionAnswer(double x)
-	{
-        //c_1 e^(-2 x) + (2 sin(x))/5 - (cos(x))/5
-    	return Math.pow(Math.E, -2*x)+2*Math.sin(x)/5-Math.cos(x)/5;
-    	//return Math.pow(Math.E, (Math.sin(x))) - 2 - 2*Math.sin(x);
-	}
-    
-    public void exportFunctionAnswer(int dec_count)
+    public void exportFunctionAnswer(FunctionProvider provider, int dec_count)
     {
 		File file = new File("Answer.txt");
 		FileWriter fout;
@@ -120,7 +116,7 @@ public class BaseDifferential {
 			fout.write(kol_x + "\n");
 			for (double i = leftX; i < rightX; i+=h)
 			{
-				fout.write(i + " " + functionAnswer(i) + "\n");
+				fout.write(i + " " + provider.function(i) + "\n");
 			}
 			fout.close();
 		} catch (IOException e) {
@@ -129,16 +125,16 @@ public class BaseDifferential {
 		}
     }
     
-    public static double [][]returnfunctionAnswer(double left, double right, int n, GraphFrame frame)
+    public static double [][]returnfunctionAnswer(FunctionProvider provider, double left, double right, int n, GraphFrame frame)
     {
     	double tmp[][] = new double[2][n];
     	for (int i = 0; i < n; i++)
     	{
     		System.out.print(left + (double)i*(right-left)/(double)n);
     		System.out.print(" ");
-    		System.out.println(functionAnswer(left + ((double)i)*(right-left)/((double)n)));
+    		System.out.println(provider.function(left + ((double)i)*(right-left)/((double)n)));
     		tmp[0][i] = (left + ((double)i)*(right-left)/((double)n));
-    		tmp[1][i] = -(functionAnswer(left + (double)i*(right-left)/(double)n));
+    		tmp[1][i] = -(provider.function(left + (double)i*(right-left)/(double)n));
     	}
     	return tmp;
     }
@@ -204,13 +200,13 @@ public class BaseDifferential {
 		return err;
 	}
 	
-	public double[] getError()
+	public double[] getError(FunctionProvider provider)
 	{
 		double err[] = new double[XY[1].length];
-		double C = Math.abs(functionAnswer(XY[0][0]) - XY[1][0]);
+		double C = Math.abs(provider.function(XY[0][0]) - XY[1][0]);
 		for (int i = 0; i < size; i++)
 		{
-			err[i] = -functionAnswer(XY[0][i]) + XY[1][i] + C;
+			err[i] = -provider.function(XY[0][i]) + XY[1][i] + C;
 		}
 		return err;
 	}
@@ -245,9 +241,9 @@ public class BaseDifferential {
     	frame.AddFunc(errfunc, color, name);
 	}
 
-	public void paintError(double scale, GraphFrame frame, String name, Color color)
+	public void paintError(FunctionProvider provider, double scale, GraphFrame frame, String name, Color color)
 	{
-		double Y[] = getError();
+		double Y[] = getError(provider);
     	for (int i = 0; i < size; i++)
     		Y[i] *= scale;
     	Function errfunc = new Function(size, XY[0], Y);
