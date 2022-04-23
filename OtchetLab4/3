@@ -1,8 +1,0 @@
-}
-\end{center}
-\vfill
-
-\newlength{\ML}
-\settowidth{\ML}{«\underline{\hspace{0.7cm}}» \underline{\hspace{2cm}}}
-\hfill\begin{minipage}{0.4\textwidth}
-  Работу выполнил
