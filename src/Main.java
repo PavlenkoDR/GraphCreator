@@ -5,6 +5,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFrame;
 
@@ -19,27 +22,38 @@ public class Main {
     Main()
     {
     }
-    public static void main(String[] args){
+    public static void main(String[] args) {
+
+		// test 1
+//		double tmp = DifferenceScheme.matrixDeterminant(new double[][]{{-3, 2, -5}, {10, 4, 7}, {6, -8, -9}});
+//		double[] KramerSLAE1 = DifferenceScheme.KramerSLAE(new double[][]{{2, 1, -1}, {3, 2, 2}, {1, 0, 1}}, new double[]{3, -7, -2});
+//		double[] sweepSLAE1 = DifferenceScheme.sweepSLAE(new double[][]{{2, 1, -1}, {3, 2, 2}, {1, 0, 1}}, new double[]{3, -7, -2});
+
+		//
+
     	long last_time = System.currentTimeMillis();
     	GraphFrame frame;
     	frame = new GraphFrame("Frame", 1200, 800);
     	frame.SetDrawLine(true);
     	frame.requestFocusInWindow();
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	int n = 30;
-    	double left = 0, right = 1, y0 = 0.8;
-    	String func = "sin(x) - 2*y";
+    	int n = 50;
+    	double left = 0, right = 5, y0 = 0.8;
+    	String func = "sin(x) - 2*y"; // y' = sin(x) - 2*y
     	//int n = 10;
     	//double left = 0, right = 1, y0 = -1;
     	//String func = "sin(2*x) + y*cos(x)";
+		/*
 		BaseDifferential.FunctionProvider provider = new BaseDifferential.FunctionProvider() {
 			@Override
 			public double function(double x) {
-				return Math.pow(Math.E, -2*x)+2*Math.sin(x)/5-Math.cos(x)/5;
+				return Math.pow(Math.E, -2*x)+2*Math.sin(x)/5-Math.cos(x)/5; // https://www.wolframalpha.com/input?i=y%27+%3D+sin%28x%29+-+2*y
 			}
 		};
-    	double tmppp[][] = BaseDifferential.returnfunctionAnswer(provider, left, right, n, frame);
-    	//frame.AddFunc(n, tmppp[0], tmppp[1], Color.GREEN, "Answer");
+    	double tmppp[][] = BaseDifferential.returnfunctionAnswer(provider, left, right, n);
+    	frame.AddFunc(n, tmppp[0], tmppp[1], Color.GREEN, "Answer");
+		//*/
+		/*
     	RungeKutta4 euler1;
     	double errN[] = new double[n], err[], errX[] = new double[n];
     	/*
@@ -54,8 +68,46 @@ public class Main {
     		errN[i]*=10000;
     	}
     	frame.AddFunc(n, errX, errN, Color.RED, "Awerage");
-    	*/
-    	//*
+    	//*/
+
+		List<GraphFrame> frames = new ArrayList<>();
+
+		DifferenceScheme scheme = new DifferenceScheme(0.01, 0.0, 10.0, 10);
+
+		for (int i = 0; i < scheme.answer.t_tau.length; ++i){
+			GraphFrame frame1;
+			frame1 = new GraphFrame("Frame", 1200, 800);
+			frame1.SetDrawLine(true);
+
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			frame1.AddFunc(new Function(scheme.answer.x_h.length, scheme.answer.x_h, scheme.answer.u[i]), Color.BLACK, "u, t = " + scheme.answer.t_tau[i]);
+			frame1.AddFunc(new Function(scheme.answer.x_h.length, scheme.answer.x_h, scheme.answer.error_absolute[i]), Color.RED, "u, t = " + scheme.answer.t_tau[i]);
+
+			//frame.Graph.FunctionList.get(frame.Graph.FunctionList.size() - 1).getL().Enable = false;
+			frames.add(frame1);
+		}
+
+		Runnable runnable = () -> {
+			try {
+				//TimeUnit.MILLISECONDS.sleep(5000);
+				while (true) {
+					for (int i = 0; i < frames.size(); ++i){
+
+						frames.get(i).requestFocus();
+						TimeUnit.MILLISECONDS.sleep(500);
+					}
+				}
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		};
+
+		Thread thread = new Thread(runnable);
+		thread.start();
+
+		/*
     	//==================================== EulersMethod ====================================
     	EulersMethod euler = new EulersMethod(func, left, right, n, y0);
     	//euler.paintSolve(1, frame, "EulersMethod", new Color((int)(256*Math.random()), (int)(256*Math.random()), (int)(256*Math.random())));
@@ -94,20 +146,20 @@ public class Main {
     	rung4.exportSolve(8);
     	rung4.exportFunctionAnswer(8);
     	//*/
-    	//*
-    	//==================================== ExplicitDfference ==============================
-    	ExplicitDfference test = new ExplicitDfference("sin(x)-2*y", -10, 10, 0, 200, 200);
-    	test.exportSolve(4);
-    	//GraphFrame frame1;
-    	//GraphFrame frame1 = new GraphFrame("Frame", 800, 600);
-    	//frame1 = new GraphFrame("Frame", 1200, 800);
-    	//frame1.SetDrawLine(true);
-    	//frame1.requestFocusInWindow();
-    	frame.AddFunc(new Function(test.getSize(), test.getX(),
-				Function.returnInvers(test.getU()[test.getU().length - 1])), 
-				new Color((int)(256*Math.random()), 
-				(int)(256*Math.random()), 
-				(int)(256*Math.random())), 
+		/*
+		//==================================== ExplicitDfference ==============================
+		ExplicitDfference test = new ExplicitDfference("sin(x)-2*y", -10, 10, 0, 200, 200);
+		test.exportSolve(4);
+		//GraphFrame frame1;
+		//GraphFrame frame1 = new GraphFrame("Frame", 800, 600);
+		//frame1 = new GraphFrame("Frame", 1200, 800);
+		//frame1.SetDrawLine(true);
+		//frame1.requestFocusInWindow();
+		frame.AddFunc(new Function(test.getSize(), test.getX(),
+						Function.returnInvers(test.getU()[test.getU().length - 1])),
+				new Color((int)(256*Math.random()),
+						(int)(256*Math.random()),
+						(int)(256*Math.random())),
 				"level max");
     	/*
     	frame1.AddFunc(new Function(test.getSize(), test.getX(), 
@@ -117,9 +169,9 @@ public class Main {
 				(int)(256*Math.random())), 
 				"average max");
 				*/
-    	frame.AddFunc("0-cos(x)", -10, 10, Color.BLUE, "-cos(x)");
-    	test.paintError("0-cos(x)", 1, frame, "ErrorExplicitDfference", Color.RED);
-    	test.paintError("0-cos(x)", 10, frame, "ErrorExplicitDfference", Color.CYAN);
+		//frame.AddFunc("0-cos(x)", -10, 10, Color.BLUE, "-cos(x)");
+		//test.paintError("0-cos(x)", 1, frame, "ErrorExplicitDfference", Color.RED);
+		//test.paintError("0-cos(x)", 10, frame, "ErrorExplicitDfference", Color.CYAN);
     	/*
     	for (int i = 0; i < test.getU().length; i++)
     	{
@@ -133,10 +185,29 @@ public class Main {
     		//System.out.println(i);
     	}
     	//*/
+		/*
+		//==================================== ExplicitDfference ==============================
+		IxplicitDfference testIxplicitDfference = new IxplicitDfference("sin(x)-2*y", -10, 10, 0, 200, 200);
+		testIxplicitDfference.exportSolve(4);
+		//GraphFrame frame1;
+		//GraphFrame frame1 = new GraphFrame("Frame", 800, 600);
+		//frame1 = new GraphFrame("Frame", 1200, 800);
+		//frame1.SetDrawLine(true);
+		//frame1.requestFocusInWindow();
+		frame.AddFunc(new Function(testIxplicitDfference.getSize(), testIxplicitDfference.getX(),
+						Function.returnInvers(testIxplicitDfference.getU()[testIxplicitDfference.getU().length - 1])),
+				new Color((int)(256*Math.random()),
+						(int)(256*Math.random()),
+						(int)(256*Math.random())),
+				"level max");
+		frame.AddFunc("0-cos(x)", -10, 10, Color.BLUE, "-cos(x)");
+		testIxplicitDfference.paintError("0-cos(x)", 1, frame, "ErrorExplicitDfference", Color.RED);
+		testIxplicitDfference.paintError("0-cos(x)", 10, frame, "ErrorExplicitDfference", Color.CYAN);
 
     	//frame.AddFunc("0-cos(x)", -10, 10, Color.BLUE, "-cos(x)");
     	//frame.AddFunc("sin(x)", -10, 10, Color.BLUE, "sin(x)");
     	//frame.AddFunc("sin(x)", -10, 10, Color.CYAN, "sin(x)");
+		//*/
     	new Main();
     	System.out.println("Done! " + (System.currentTimeMillis() - last_time));
     }

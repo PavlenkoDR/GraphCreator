@@ -52,7 +52,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 	Function nowfunc;
 	public Paint paint;
 	List<Integer> ActionPoint;
-	List<Pair<Function, Color> > FunctionList = new ArrayList<Pair<Function, Color> >();
+	public List<Pair<Function, Color> > FunctionList = new ArrayList<Pair<Function, Color> >();
 	int selectedID;
 	private MatchParser p = new MatchParser();
 	boolean allocation;

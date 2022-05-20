@@ -1,14 +1,5 @@
 package Graph;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -169,6 +160,8 @@ public class GraphFrame extends JFrame{
     	//TPanel Panel1 = new TPanel();
     	setLocationRelativeTo(null); //open on center
     	setSize(width, height);
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
     	//==================================================//
     	//=============== Init components ==================//

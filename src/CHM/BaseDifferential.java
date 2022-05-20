@@ -125,7 +125,7 @@ public class BaseDifferential {
 		}
     }
     
-    public static double [][]returnfunctionAnswer(FunctionProvider provider, double left, double right, int n, GraphFrame frame)
+    public static double [][]returnfunctionAnswer(FunctionProvider provider, double left, double right, int n)
     {
     	double tmp[][] = new double[2][n];
     	for (int i = 0; i < n; i++)
