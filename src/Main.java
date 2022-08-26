@@ -72,17 +72,24 @@ public class Main {
 
 		List<GraphFrame> frames = new ArrayList<>();
 
-		DifferenceScheme scheme = new DifferenceScheme(0.01, 0.0, 10.0, 10);
+		DifferenceScheme scheme = new DifferenceScheme(0.1, 10000, 0.0, 1.0, 30);
+		int animationFrames = 10;
+		int animationDelay = 200;
 
-		for (int i = 0; i < scheme.answer.t_tau.length; ++i){
+
+		for (int i = 0; i < scheme.answer.t_tau.length - 1; ++i) {
+			if ((i - 1) % (scheme.answer.t_tau.length / animationFrames) != 0){
+				continue;
+			}
 			GraphFrame frame1;
-			frame1 = new GraphFrame("Frame", 1200, 800);
+			frame1 = new GraphFrame("Frame", 1900, 1200);
 			frame1.SetDrawLine(true);
 
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 			frame1.AddFunc(new Function(scheme.answer.x_h.length, scheme.answer.x_h, scheme.answer.u[i]), Color.BLACK, "u, t = " + scheme.answer.t_tau[i]);
-			frame1.AddFunc(new Function(scheme.answer.x_h.length, scheme.answer.x_h, scheme.answer.error_absolute[i]), Color.RED, "u, t = " + scheme.answer.t_tau[i]);
+			frame1.AddFunc(new Function(scheme.answer.x_h.length, scheme.answer.x_h, scheme.answer.error_absolute[i]), Color.BLUE, "u, t = " + scheme.answer.t_tau[i] + ",  error absolute");
+			frame1.AddFunc(new Function(scheme.answer.x_h.length, scheme.answer.x_h, scheme.answer.error_relative[i]), Color.RED, "u, t = " + scheme.answer.t_tau[i] + ",  error relative");
 
 			//frame.Graph.FunctionList.get(frame.Graph.FunctionList.size() - 1).getL().Enable = false;
 			frames.add(frame1);
@@ -95,7 +102,7 @@ public class Main {
 					for (int i = 0; i < frames.size(); ++i){
 
 						frames.get(i).requestFocus();
-						TimeUnit.MILLISECONDS.sleep(500);
+						TimeUnit.MILLISECONDS.sleep(animationDelay);
 					}
 				}
 			}

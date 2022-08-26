@@ -18,7 +18,8 @@ t,j
 import java.util.Arrays;
 
 public class DifferenceScheme {
-	final double C = 1.0/2.0;
+	final double C = 1.0;
+	double t;
 	double tau;
 	double h;
 	double l_0;
@@ -31,58 +32,112 @@ public class DifferenceScheme {
 		public double[][] exact_u;
 		public double[][] u;
 		public double[][] error_absolute;
+		public double[][] error_relative;
 		public double error_absolute_delta;
+		public double error_relative_delta;
 	}
 	public Answer answer;
 
-	public DifferenceScheme(double tau, double l_0, double l, int n) {
-		this.tau = tau;
+	public DifferenceScheme(double t, int t_n, double l_0, double l, int l_n) {
+		this.t = t;
+		this.tau = t / t_n;
 		this.l = l;
 		this.l_0 = l_0;
-		this.h = l / n;
-		this.u = new double[n][n];
+		this.h = l / l_n;
+		this.u = new double[t_n][l_n];
 
 		answer = new Answer();
-		answer.t_tau = new double[n];
-		answer.x_h = new double[n];
-		answer.exact_u = new double[n][n];
-		answer.u = new double[n][n];
-		answer.error_absolute = new double[n][n];
+		answer.t_tau = new double[t_n];
+		answer.x_h = new double[l_n];
+		answer.exact_u = new double[t_n][l_n];
+		answer.u = new double[t_n][l_n];
+		answer.error_absolute = new double[t_n][l_n];
+		answer.error_relative = new double[t_n][l_n];
 
-		for (int j = 0; j < n; ++j) {
-			for (int i = 0; i < n; ++i) {
-				u[i][j] = 0;
+		for (int j = 0; j < t_n; ++j) {
+			for (int i = 0; i < l_n; ++i) {
+				u[j][i] = 0;
 			}
 		}
 
-		for (int j = 0; j < n; ++j) {
+		for (int j = 0; j < t_n; ++j) {
 			answer.t_tau[j] = tau * j;
 		}
-		for (int i = 0; i < n; ++i) {
+		for (int i = 0; i < l_n; ++i) {
 			answer.x_h[i] = l_0 + i * h;
 		}
-		for (int i = 0; i < n; ++i) {
-			u[i][0] = mu1(answer.x_h[i]);
-			u[i][1] = mu2(answer.x_h[i]) * tau + u[i][0];
+		for (int i = 0; i < l_n; ++i) {
+			u[0][i] = mu1(answer.x_h[i]);
+			u[1][i] = mu2(answer.x_h[i]) * tau + u[0][i];
 		}
-		for (int j = 0; j < n; ++j) {
-			u[0][j] = 0;
-			u[n-1][j] = 0;
+		for (int j = 0; j < t_n; ++j) {
+			u[j][0] = 0;
+			u[j][l_n-1] = 0;
 		}
 		double tau_pow2 =  Math.pow(tau, 2);
 		double C_pow2 =  Math.pow(C, 2);
 		double tau_C_pow2 =  tau_pow2 * C_pow2;
 		double h_pow2 =  Math.pow(h, 2);
 		double tau_C_pow2_div_h_pow2 = tau_C_pow2 / h_pow2;
-		for (int j = 1; j < n - 1; ++j) {
-			for (int i = 1; i < n - 1; ++i) {
-				double f_answer = f(answer.x_h[i], answer.t_tau[j]);
-				u[i][j + 1] =
-					2 * u[i][j] * (1 - tau_C_pow2_div_h_pow2) +
-					tau_C_pow2_div_h_pow2 * u[i + 1][j] +
-					tau_C_pow2_div_h_pow2 * u[i - 1][j] -
-					u[i][j-1] +
-					tau_pow2 * f_answer;
+
+		boolean isCompact9 = true;
+		boolean isCompact5 = false;
+
+		for (int j = 1; j < t_n - 1; ++j) {
+			for (int i = 1; i < l_n - 1; ++i) {
+				if (isCompact5){
+					// u[j-1][i-1], u[j-1][i], u[j-1][i+1]
+					// u[j][i-1], u[j][i], u[j][i+1]
+					// >>u[j+1][i+1]<<
+
+					u[j+1][i+1] =   C/(h_pow2) * (u[j][i+1] + 2 * u[j][i] + u[j][i-1])
+									+ C_pow2/(12 * h_pow2) * (u[j-1][i-1] - 2 * u[j-1][i+1])
+									- C_pow2/(6 * h_pow2)*(u[j-1][i] - 2*u[j][i])
+									+ C_pow2/(12 * h_pow2) * (u[j-1][i-1] - 2 * u[j][i+1])
+									- 2 / tau_pow2 * (u[j-1][i] - 2 * u[j][i])
+									+ 1 / (6 * tau_pow2) * (u[j][i+1] - 2 * u[j][i] + u[j][i-1])
+									- 1 / (12 * tau_pow2) * (u[j-1][i+1] - 2 * u[j-1][i] + u[j-1][i-1]);
+				}
+				else if (isCompact9){
+					double f12 = f(answer.x_h[i-1], answer.t_tau[j]);
+					double f21 = f(answer.x_h[i], answer.t_tau[j-1]);
+					double f22 = f(answer.x_h[i], answer.t_tau[j]);
+					double f23 = f(answer.x_h[i], answer.t_tau[j+1]);
+					double f32 = f(answer.x_h[i+1], answer.t_tau[j]);
+					double F = f22 + (f32-2*f22+f12)/(12) + (f21-2*f22+f23)/(12);
+
+					// u[j-1][i-1],   u[j-1][i],   u[j-1][i+1]
+					// u[j][i-1],     u[j][i],     u[j][i+1]
+					// u[j+1][i-1],   u[j+1][i], >>u[j+1][i+1]<<
+
+					u[j+1][i+1] = (
+									u[j-1][i-1] * (tau - h)
+									- 2 * u[j-1][i] * (5 * h + tau)
+									- u[j-1][i+1] * h + u[j-1][i+1] * tau
+									+ 2 * u[j][i-1] * h
+									+ 10 * u[j][i-1] * tau
+									+ 20 * u[j][i] * h
+									- 20 * u[j][i] * tau
+									+ 2 * u[j][i+1] * h
+									+ 10 * u[j][i+1] * tau
+									- u[j+1][i-1] * h
+									+ u[j+1][i-1] * tau
+									- 10 * u[j+1][i] * h
+									- 2 * u[j+1][i] * tau
+									+ 12 * h * F * tau
+							)/(h - tau);
+				}
+				else {
+					//                u[j-1][i]
+					// u[j][i-1],     u[j][i],       u[j][i+1]
+					//              >>u[j+1][i]<<
+					double f_answer = f(answer.x_h[i], answer.t_tau[j]);
+					u[j+1][i] = 2 * u[j][i] * (1 - tau_C_pow2_div_h_pow2) +
+							tau_C_pow2_div_h_pow2 * u[j][i+1] +
+							tau_C_pow2_div_h_pow2 * u[j][i-1] -
+							u[j-1][i] +
+							tau_pow2 * f_answer;
+				}
 			}
 		}
 
@@ -98,22 +153,28 @@ public class DifferenceScheme {
 //			}
 //		}
 
-		for (int j = 0; j < n; ++j) {
-			for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < t_n; ++j) {
+			for (int i = 0; i < l_n; ++i) {
 				answer.u[j][i] = u[j][i];
 			}
 		}
-		for (int j = 0; j < n; ++j) {
-			for (int i = 0; i < n; ++i) {
-				answer.exact_u[i][j] = exact_u_i_j(answer.x_h[i], answer.t_tau[j]);
-				answer.error_absolute[i][j] = Math.abs(answer.exact_u[i][j] - answer.u[i][j]);
-				answer.error_absolute_delta += answer.error_absolute[i][j] / (n * n);
+		for (int j = 0; j < t_n - 1; ++j) {
+			for (int i = 0; i < l_n; ++i) {
+				answer.exact_u[j][i] = exact_u_i_j(answer.x_h[i], answer.t_tau[j]);
+				answer.error_absolute[j][i] = Math.abs(answer.exact_u[j][i] - answer.u[j][i]);
+				answer.error_absolute_delta += answer.error_absolute[j][i] / (l_n * (t_n - 1));
+			}
+		}
+		for (int j = 0; j < t_n - 1; ++j) {
+			for (int i = 0; i < l_n; ++i) {
+				answer.error_relative[j][i] = answer.error_absolute[j][i] / answer.exact_u[j][i];
+				answer.error_relative_delta += answer.error_relative[j][i] / (l_n * (t_n - 1));
 			}
 		}
 	}
 
 	public DifferenceScheme() {
-		this(0.01, 0.0, 1.0, 10);
+		this(1.0, 10, 0.0, 1.0, 10);
 	}
 
 	public static double matrixDeterminant(double A[][]){
